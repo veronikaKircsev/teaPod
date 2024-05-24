@@ -72,6 +72,10 @@ public class PushPipelineFactory {
                 pd.getViewTransform();
                 // erste filter, immer neu bestimmen und neu filtern
 
+                // last two steps
+                pd.getProjTransform();
+                pd.getViewportTransform();
+
                 Mat4 rotMat = Matrices.rotate(10, pd.getModelRotAxis()); // neue matrix kommt raus
                 Mat4 transMat = pd.getModelTranslation().multiply(rotMat);
                 Mat4 viewMat = pd.getViewTransform().multiply(transMat);

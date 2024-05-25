@@ -33,7 +33,7 @@ public class PushPipelineFactory {
         // lighting can be switched on/off
         if (pd.isPerformLighting()) {
             // 4a. TODO perform lighting in VIEW SPACE
-            
+
             // 5. TODO perform projection transformation on VIEW SPACE coordinates
         } else {
             // 5. TODO perform projection transformation
@@ -53,16 +53,16 @@ public class PushPipelineFactory {
             // TODO rotation variable goes in here
 
             /** This method is called for every frame from the JavaFX Animation
-             * system (using an AnimationTimer, see AnimationRenderer). 
+             * system (using an AnimationTimer, see AnimationRenderer).
              * @param fraction the time which has passed since the last render call in a fraction of a second
-             * @param model    the model to render 
+             * @param model    the model to render
              */
             @Override
             protected void render(float fraction, Model model) {
 
-                pd.getGraphicsContext().setStroke(Color.RED);
-                pd.getGraphicsContext().strokeLine(pos,pos,pos+100,pos+100);
-                pos++;
+                //pd.getGraphicsContext().setStroke(Color.RED);
+                //pd.getGraphicsContext().strokeLine(pos,pos,pos+100,pos+100);
+                //pos++;
 
                 // müssen wir drechung bestimmen
                 pd.getModelRotAxis();
@@ -72,7 +72,7 @@ public class PushPipelineFactory {
                 pd.getViewTransform();
                 // erste filter, immer neu bestimmen und neu filtern
 
-                Mat4 rotMat = Matrices.rotate(10, pd.getModelRotAxis()); // neue matrix kommt raus
+                Mat4 rotMat = Matrices.rotate(4, pd.getModelRotAxis()); // neue matrix kommt raus
                 Mat4 transMat = pd.getModelTranslation().multiply(rotMat);
                 Mat4 viewMat = pd.getViewTransform().multiply(transMat);
                 model.getFaces().forEach(f -> {

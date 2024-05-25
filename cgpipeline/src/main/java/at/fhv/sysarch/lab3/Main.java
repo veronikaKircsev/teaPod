@@ -12,30 +12,35 @@ import at.fhv.sysarch.lab3.pipeline.PushPipelineFactory;
 import at.fhv.sysarch.lab3.rendering.RenderingMode;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class Main extends Application {
-    private final static int VIEW_WIDTH  = 860;
-    private final static int VIEW_HEIGHT = 540;
-
-    private final static int SCENE_WIDTH  = VIEW_WIDTH * 2;
-    private final static int SCENE_HEIGHT = VIEW_HEIGHT * 2;
-
+    private static int VIEW_WIDTH;
+    private static int VIEW_HEIGHT;
     private final static boolean USE_PUSH_PIPELINE = true;
-    
+
+
     @Override
     public void start(Stage stage) throws IOException {
+        Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+        VIEW_WIDTH = (int) screenBounds.getWidth() / 2;
+        VIEW_HEIGHT = (int) screenBounds.getHeight() / 2;
+
         File f = new File("resources/teapot.obj");
         Optional<Model> om = ObjLoader.loadModel(f);
 
         Group root = new Group();
-        Scene s = new Scene(root, SCENE_WIDTH, SCENE_HEIGHT, Color.BLACK);
-        
+        Scene s = new Scene(root, screenBounds.getWidth(), screenBounds.getHeight(), Color.BLACK);
+
         final Canvas c1 = new Canvas(VIEW_WIDTH, VIEW_HEIGHT);
         final Canvas c2 = new Canvas(VIEW_WIDTH, VIEW_HEIGHT);
         final Canvas c3 = new Canvas(VIEW_WIDTH, VIEW_HEIGHT);
@@ -47,6 +52,18 @@ public class Main extends Application {
         grid.add(c3, 0, 1);
         grid.add(c4, 1, 1);
 
+        ColumnConstraints col1 = new ColumnConstraints();
+        col1.setPercentWidth(50);
+        ColumnConstraints col2 = new ColumnConstraints();
+        col2.setPercentWidth(50);
+        grid.getColumnConstraints().addAll(col1, col2);
+
+        RowConstraints row1 = new RowConstraints();
+        row1.setPercentHeight(50);
+        RowConstraints row2 = new RowConstraints();
+        row2.setPercentHeight(50);
+        grid.getRowConstraints().addAll(row1, row2);
+
         root.getChildren().add(grid);
         stage.setScene(s);
         stage.setTitle("Simple CG Pipeline");
@@ -54,24 +71,25 @@ public class Main extends Application {
 
         om.ifPresent(m -> {
             PipelineData pd1 = new PipelineData.Builder(c1, m, VIEW_WIDTH, VIEW_HEIGHT)
-                                    .setModelColor(Color.ORANGE)
-                                    .build();
+                    .setModelColor(Color.ORANGE)
+                    .setRenderingMode(RenderingMode.WIREFRAME)
+                    .build();
 
             PipelineData pd2 = new PipelineData.Builder(c2, m, VIEW_WIDTH, VIEW_HEIGHT)
-                                    .setModelColor(Color.DARKGREEN)
-                                    .setRenderingMode(RenderingMode.WIREFRAME)
-                                    .build();
+                    .setModelColor(Color.DARKGREEN)
+                    .setRenderingMode(RenderingMode.WIREFRAME)
+                    .build();
 
             PipelineData pd3 = new PipelineData.Builder(c3, m, VIEW_WIDTH, VIEW_HEIGHT)
-                                    .setModelColor(Color.RED)
-                                    .setRenderingMode(RenderingMode.FILLED)
-                                    .build();
+                    .setModelColor(Color.RED)
+                    .setRenderingMode(RenderingMode.FILLED)
+                    .build();
 
             PipelineData pd4 = new PipelineData.Builder(c4, m, VIEW_WIDTH, VIEW_HEIGHT)
-                                    .setModelColor(Color.BLUE)
-                                    .setRenderingMode(RenderingMode.FILLED)
-                                    .setPerformLighting(true)
-                                    .build();
+                    .setModelColor(Color.BLUE)
+                    .setRenderingMode(RenderingMode.FILLED)
+                    .setPerformLighting(true)
+                    .build();
 
             AnimationTimer anim1;
             AnimationTimer anim2;

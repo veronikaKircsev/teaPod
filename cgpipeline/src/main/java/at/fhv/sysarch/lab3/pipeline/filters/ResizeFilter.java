@@ -11,7 +11,9 @@ public class ResizeFilter implements IFilter<Face, Face> {
     }
 
     public void write(Face face) {
-        Face newFace = new Face(face.getV1().multiply(100), face.getV2().multiply(100), face.getV3().multiply(100), face);
-        this.successor.write(newFace);
+        if (face != null) {
+            Face newFace = new Face(face.getV1().multiply(100), face.getV2().multiply(100), face.getV3().multiply(100), face);
+            this.successor.write(newFace);
+        }
     }
 }

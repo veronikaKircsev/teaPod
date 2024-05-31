@@ -12,6 +12,10 @@ public class SourceSingle implements IFilter<Model, Face> {
     }
 
     public void write(Model model) {
-        model.getFaces().forEach(face -> successor.write(face));
-    }
-}
+        model.getFaces().forEach(f -> {
+
+
+            successor.write(f);
+        });
+        return;
+    }}

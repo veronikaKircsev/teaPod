@@ -7,19 +7,22 @@ import com.hackoeur.jglm.Vec4;
 import javafx.scene.paint.Color;
 
 public class ProjectionTransformationFilter implements IFilter<Pair<Face, Color>,Pair<Face,Color> > {
+
     private IFilter<Pair<Face, Color>, ?> successor;
     private PipelineData pd;
-
-
+    private Pipe<Pair<Face, Color>> pipe;
 
     public ProjectionTransformationFilter(PipelineData pd){
         this.pd = pd;
     }
 
-
     @Override
     public void setSuccessor(IFilter<Pair<Face, Color>, ?> successor) {
         this.successor = successor;
+    }
+
+    public void setPipe(Pipe<Pair<Face, Color>> pipe) {
+        this.pipe = pipe;
     }
 
     @Override
@@ -33,6 +36,6 @@ public class ProjectionTransformationFilter implements IFilter<Pair<Face, Color>
         Vec4 v3ProjNorm = pd.getProjTransform().multiply(input.fst().getN3());
 
 
-        successor.write(new Pair<>(new Face(v1Proj,v2Proj,v3Proj,v1ProjNorm,v2ProjNorm,v3ProjNorm),input.snd()));
+        pipe.write(new Pair<>(new Face(v1Proj,v2Proj,v3Proj,v1ProjNorm,v2ProjNorm,v3ProjNorm),input.snd()));
     }
 }

@@ -24,7 +24,6 @@ public class Renderer implements IFilter<Pair<Face, Color>, Face>{
         this.modelColor = modelColor;
     }
 
-
     public void write(Pair<Face, Color> input) {
         gpc.setStroke(input.snd());
         gpc.setFill(input.snd());
@@ -38,8 +37,11 @@ public class Renderer implements IFilter<Pair<Face, Color>, Face>{
             gpc.strokeLine(input.fst().getV2().getX(), input.fst().getV2().getY(), input.fst().getV3().getX(), input.fst().getV3().getY());
             gpc.strokeLine(input.fst().getV1().getX(), input.fst().getV1().getY(), input.fst().getV3().getX(), input.fst().getV3().getY());
         } else if (this.renderingMode == RenderingMode.FILLED){
-            gpc.fillPolygon(new double[]{ input.fst().getV1().getX(), input.fst().getV2().getX(), input.fst().getV3().getX() },
-              new double[]{ input.fst().getV1().getY(), input.fst().getV2().getY(), input.fst().getV3().getY()},3);
+            double[] cordX = new double[]{ input.fst().getV1().getX(), input.fst().getV2().getX(), input.fst().getV3().getX() };
+            double[] cordY = new double[]{ input.fst().getV1().getY(), input.fst().getV2().getY(), input.fst().getV3().getY()};
+            gpc.fillPolygon(cordX,
+              cordY,3);
+            gpc.strokePolygon(cordX, cordY, 3);
 
         }
 

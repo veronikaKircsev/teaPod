@@ -1,67 +1,87 @@
 package at.fhv.sysarch.lab3.pipeline;
 
 import at.fhv.sysarch.lab3.animation.AnimationRenderer;
+import at.fhv.sysarch.lab3.obj.Face;
 import at.fhv.sysarch.lab3.obj.Model;
+import at.fhv.sysarch.lab3.pipeline.data.Pair;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Matrices;
 import javafx.animation.AnimationTimer;
 import at.fhv.sysarch.lab3.pipeline.filters.*;
+import javafx.scene.paint.Color;
 
 public class PushPipelineFactory {
     public static AnimationTimer createPipeline(PipelineData pd) {
 
-        pd.getGraphicsContext().setStroke(pd.getModelColor());
-        pd.getGraphicsContext().setFill(pd.getModelColor());
-        // push from the source (model)
-        SourceSingle source = new SourceSingle();
-        ResizeFilter filter = new ResizeFilter();
         Renderer r = new Renderer(pd.getGraphicsContext(), pd.getRenderingMode(),pd.getModelColor());
-        //perform model-view transformation from model to VIEW SPACE coordinates
-        ModelViewTransformationFilter transFilter = new ModelViewTransformationFilter();
-        // perform backface culling in VIEW SPACE
-        BackfaceCulling backfaceCulling = new BackfaceCulling(pd.getViewingEye());
-        // perform depth sorting in VIEW SPACE
-        DepthSorting depthSorting = new DepthSorting(pd.getViewingEye());
-        //add coloring (space unimportant)
-        Coloring coloring = new Coloring(pd.getModelColor());
-        ProjectionTransformationFilter projectionTransformationFilter = new ProjectionTransformationFilter(pd);
-
 
         // feed into the sink (renderer)
-        filter.setSuccessor(coloring);
-        depthSorting.setSuccessor(filter);
-        backfaceCulling.setSuccessor(depthSorting);
-        transFilter.setSuccessor(backfaceCulling);
-        source.setSuccessor(transFilter);
+        Pipe<Pair<Face, Color>> screenSpacePipe = new Pipe<>();
+        screenSpacePipe.setSuccessor(r);
+        // perform perspective division to screen coordinates
+        ScreenSpaceFilter screenSpace = new ScreenSpaceFilter(pd.getViewportTransform());
+        screenSpace.setPipe(screenSpacePipe);
+
+        Pipe<Pair<Face, Color>> projectionTransfomationPipe = new Pipe<>();
+        projectionTransfomationPipe.setSuccessor(screenSpace);
+        //perform projection transformation on VIEW SPACE coordinates
+        ProjectionTransformationFilter projectionTransformationFilter = new ProjectionTransformationFilter(pd);
+        projectionTransformationFilter.setPipe(projectionTransfomationPipe);
+
+        Pipe<Pair<Face, Color>> colorPipe = new Pipe<>();
         // lighting can be switched on/off
         if (pd.isPerformLighting()) {
             //perform lighting in VIEW SPACE
+            Pipe<Pair<Face, Color>> lightingPipe = new Pipe<>();
+            lightingPipe.setSuccessor(projectionTransformationFilter);
             Lighting lighting = new Lighting(pd.getLightPos());
+            lighting.setPipe(lightingPipe);
+            colorPipe.setSuccessor(lighting);
 
-            lighting.setSuccessor(projectionTransformationFilter);
-
-            coloring.setSuccessor(lighting);
 
         } else {
-            coloring.setSuccessor(projectionTransformationFilter);
+            colorPipe.setSuccessor(projectionTransformationFilter);
         }
-        // perform perspective division to screen coordinates
-        ScreenSpaceFilter screenSpace = new ScreenSpaceFilter(pd.getViewportTransform());
-        //perform projection transformation on VIEW SPACE coordinates
-        projectionTransformationFilter.setSuccessor(screenSpace);
 
-        screenSpace.setSuccessor(r);
+        //add coloring (space unimportant)
+        Coloring coloring = new Coloring(pd.getModelColor());
+        coloring.setPipe(colorPipe);
+
+        Pipe<Face> depthSortingPipe = new Pipe<>();
+        depthSortingPipe.setSuccessor(coloring);
+        // perform depth sorting in VIEW SPACE
+        DepthSorting depthSorting = new DepthSorting(pd.getViewingEye());
+        depthSorting.setPipe(depthSortingPipe);
+
+
+        Pipe<Face> backFacePipe = new Pipe<>();
+        backFacePipe.setSuccessor(depthSorting);
+        // perform backface culling in VIEW SPACE
+        BackfaceCulling backfaceCulling = new BackfaceCulling(pd.getViewingEye());
+        backfaceCulling.setPipe(backFacePipe);
+
+        Pipe<Face> pipe = new Pipe<>();
+        pipe.setSuccessor(backfaceCulling);
+        ResizeFilter filter = new ResizeFilter();
+        filter.setPipe(pipe);
+
+        Pipe<Face> transFilterPipe = new Pipe<>();
+        transFilterPipe.setSuccessor(filter);
+        //perform model-view transformation from model to VIEW SPACE coordinates
+        ModelViewTransformationFilter transFilter = new ModelViewTransformationFilter();
+        transFilter.setPipe(transFilterPipe);
+
+        Pipe<Face> sourcePipe = new Pipe<>();
+        sourcePipe.setSuccessor(transFilter);
+        // push from the source (model)
+        SourceSingle source = new SourceSingle();
+        source.setPipe(sourcePipe);
+
         // returning an animation renderer which handles clearing of the
-        // viewport and computation of the praction
+        // viewport and computation of the fraction
         return new AnimationRenderer(pd) {
-            // TODO rotation variable goes in here
-            // int pos = (int)Math.random() * 350;
-            private int pos = (int)(Math.random()*350);
-            //private int pos = 0;
 
-            // TODO rotation variable goes in here
-
-
+            //rotation variable goes in here
             private float rotation = 0;
 
             /** This method is called for every frame from the JavaFX Animation
@@ -113,7 +133,6 @@ public class PushPipelineFactory {
                 });
 
                  */
-
                 rotation +=  (fraction)%360;
 
                 Mat4 rotMat = Matrices.rotate(rotation, pd.getModelRotAxis());
@@ -138,8 +157,6 @@ public class PushPipelineFactory {
                     pd.getGraphicsContext().strokeLine(face.getV2().getX()*100, face.getV2().getY()*100, face.getV3().getX()*100, face.getV3().getY()*100);
                     pd.getGraphicsContext().strokeLine(face.getV1().getX()*100, face.getV1().getY()*100, face.getV3().getX()*100, face.getV3().getY()*100);
                 });*/
-
-                source.write(model);
 
                 // TODO compute rotation in radians
 

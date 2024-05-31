@@ -5,15 +5,19 @@ import at.fhv.sysarch.lab3.obj.Face;
 public class ResizeFilter implements IFilter<Face, Face> {
 
     private IFilter<Face, ?> successor;
+    private Pipe<Face> pipe;
 
     public void setSuccessor(IFilter<Face, ?> r) {
         this.successor = r;
+    }
+    public void setPipe(Pipe<Face> pipe) {
+        this.pipe = pipe;
     }
 
     public void write(Face face) {
         if (face != null) {
             Face newFace = new Face(face.getV1().multiply(100), face.getV2().multiply(100), face.getV3().multiply(100), face);
-            this.successor.write(newFace);
+            pipe.write(newFace);
         }
     }
 }

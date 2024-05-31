@@ -31,4 +31,11 @@ public class Source implements IFilterOut<Face>, IFilterIn<Model> {
             Face transFace = new Face(v1new, v2new, v3new, v1NormalNew, v2NormalNew, v3NormalNew);
             successor.write(transFace);
         });
-    } }
+    }
+
+    @Override
+    public void setSuccessor(IFilterOut<Face> successor) {
+
+    }
+
+}

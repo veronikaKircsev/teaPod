@@ -11,6 +11,7 @@ public class ScreenSpaceFilter implements IFilter<Pair<Face, Color>, Pair<Face, 
 
     private IFilter<Pair<Face, Color>, ?> successor;
     private Mat4 portTrans;
+    private Pipe<Pair<Face, Color>> pipe;
 
     public ScreenSpaceFilter(Mat4 portTrans) {
         this.portTrans = portTrans;
@@ -22,11 +23,15 @@ public class ScreenSpaceFilter implements IFilter<Pair<Face, Color>, Pair<Face, 
         this.successor = successor;
     }
 
+    public void setPipe(Pipe<Pair<Face, Color>> pipe) {
+        this.pipe = pipe;
+    }
+
     @Override
     public void write(Pair<Face, Color> input) {
 
         // Transformierte Face und Farbe an den nächsten Filter weiterleiten
-        successor.write(new Pair<>(new Face(portTrans.multiply(input.fst().getV1().multiply(1f / input.fst().getV1().getW()))
+        pipe.write(new Pair<>(new Face(portTrans.multiply(input.fst().getV1().multiply(1f / input.fst().getV1().getW()))
                 , portTrans.multiply(input.fst().getV2().multiply(1f / input.fst().getV2().getW())),
                 portTrans.multiply(input.fst().getV3().multiply(1f / input.fst().getV3().getW())), input.fst()), input.snd()));
     }

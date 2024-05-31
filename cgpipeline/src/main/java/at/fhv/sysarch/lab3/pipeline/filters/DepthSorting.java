@@ -9,6 +9,7 @@ public class DepthSorting implements IFilter<Face,Face> {
 
     private IFilter<Face, ?> successor;
     private static Vec3 camera;
+    private Pipe<Face> pipe;
 
     public DepthSorting(Vec3 camera) {
         this.camera = camera;
@@ -26,6 +27,10 @@ public class DepthSorting implements IFilter<Face,Face> {
         this.successor = successor;
     }
 
+    public void setPipe(Pipe<Face> pipe) {
+        this.pipe = pipe;
+    }
+
     @Override
     public void write(Face input) {
 
@@ -34,8 +39,8 @@ public class DepthSorting implements IFilter<Face,Face> {
 
             while (!faces.isEmpty()) {
                 Face face = faces.poll();
-                if (successor != null && face != null) {
-                    successor.write(face);
+                if (pipe != null && face != null) {
+                    pipe.write(face);
                 }
             }
         }

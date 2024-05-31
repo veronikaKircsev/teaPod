@@ -7,18 +7,23 @@ import com.hackoeur.jglm.Vec4;
 public class ModelViewTransformationFilter implements IFilter<Face, Face>{
     private Mat4 transMatrix;
     //successor es sich um den nächsten Filter in einer Kette von Filtern handelt
-    private IFilter<Face,?> successor;
+    private IFilter<Face, ?> successor;
+    private Pipe<Face> pipe;
 
     @Override
     public void setSuccessor(IFilter<Face, ?> successor) {
         this.successor = successor;
     }
 
+    public void setPipe(Pipe<Face> pipe) {
+
+        this.pipe = pipe;
+    }
+
     public void setTransMatrix(Mat4 matrix) {
         this.transMatrix = matrix;
     }
 
-    @Override
     public void write(Face input) {
         // Transformation der Eckpunkte des Gesichts
         Vec4 v1new = transMatrix.multiply(input.getV1());
@@ -45,7 +50,7 @@ public class ModelViewTransformationFilter implements IFilter<Face, Face>{
 
 
         // Weitergabe des transformierten Face-Objekts an den nächsten Filter in der Kette
-        this.successor.write(transFace);
+        pipe.write(transFace);
 
     }
 }

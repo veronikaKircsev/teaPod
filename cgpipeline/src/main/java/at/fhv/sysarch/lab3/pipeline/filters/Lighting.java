@@ -7,8 +7,9 @@ import javafx.scene.paint.Color;
 
 public class Lighting implements IFilter<Pair<Face, Color>,Pair<Face,Color> > {
 
-    IFilter<Pair<Face, Color>, ?> successor;
+    private IFilter<Pair<Face, Color>, ?> successor;
     private final Vec3 unitVector;
+    private Pipe<Pair<Face,Color>> pipe;
 
     public Lighting(Vec3 unitVector) {
         this.unitVector = unitVector;
@@ -18,6 +19,10 @@ public class Lighting implements IFilter<Pair<Face, Color>,Pair<Face,Color> > {
     @Override
     public void setSuccessor(IFilter<Pair<Face, Color>, ?> successor) {
         this.successor = successor;
+    }
+
+    public void setPipe(Pipe<Pair<Face, Color>> pipe) {
+        this.pipe = pipe;
     }
 
     @Override
@@ -30,11 +35,11 @@ public class Lighting implements IFilter<Pair<Face, Color>,Pair<Face,Color> > {
         shading = Math.max(0, Math.min(1, shading));
 
         if(shading <= 0){
-            successor.write(new Pair<>(face, Color.BLACK));
+            pipe.write(new Pair<>(face, Color.BLACK));
         } else {
             // Derive the color with the shading factor
             Color shadedColor = color.deriveColor(0, 1, shading, 1);
-            successor.write(new Pair<>(face, shadedColor));
+            pipe.write(new Pair<>(face, shadedColor));
         }
     }
 

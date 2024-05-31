@@ -8,6 +8,7 @@ public class Coloring implements IFilter<Face, Pair<Face, Color>> {
 
     private IFilter<Pair<Face, Color>, ?> successor;
     private Color coloring;
+    private Pipe<Pair<Face, Color>> pipe;
 
     public Coloring(Color coloring) {
         this.coloring = coloring;
@@ -18,11 +19,14 @@ public class Coloring implements IFilter<Face, Pair<Face, Color>> {
         this.successor = successor;
     }
 
+    public void setPipe(Pipe<Pair<Face, Color>> pipe) {
+        this.pipe = pipe;
+    }
 
     @Override
     public void write(Face input) {
         Pair<Face, Color> data = new Pair<>(input, coloring);
-       successor.write(data);
+       pipe.write(data);
     }
 
 

@@ -48,7 +48,6 @@ public class Renderer implements IFilter<Pair<Face, Color>, Face>{
 
     }
 
-    @Override
     public void setSuccessor(IFilter<Face, ?> successor) {
 
     }

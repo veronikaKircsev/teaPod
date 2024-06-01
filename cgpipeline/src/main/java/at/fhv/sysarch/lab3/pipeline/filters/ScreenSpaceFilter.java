@@ -7,18 +7,11 @@ import javafx.scene.paint.Color;
 
 public class ScreenSpaceFilter implements IFilter<Pair<Face, Color>, Pair<Face, Color>>, IFilterOut<Pair<Face, Color>>{
 
-    private IFilter<Pair<Face, Color>, ?> successor;
     private Mat4 portTrans;
     private Pipe<Pair<Face, Color>> pipeSuccessor;
 
     public ScreenSpaceFilter(Mat4 portTrans) {
         this.portTrans = portTrans;
-    }
-
-    @Override
-    public void setSuccessor(IFilter<Pair<Face, Color>, ?> successor) {
-
-        this.successor = successor;
     }
 
     @Override

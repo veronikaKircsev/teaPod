@@ -7,17 +7,11 @@ import javafx.scene.paint.Color;
 
 public class Lighting implements IFilter<Pair<Face, Color>,Pair<Face,Color>>, IFilterOut<Pair<Face,Color>> {
 
-    private IFilter<Pair<Face, Color>, ?> successor;
     private final Vec3 unitVector;
     private Pipe<Pair<Face,Color>> pipeSuccessor;
 
     public Lighting(Vec3 unitVector) {
         this.unitVector = unitVector;
-    }
-
-    @Override
-    public void setSuccessor(IFilter<Pair<Face, Color>, ?> successor) {
-        this.successor = successor;
     }
 
     @Override

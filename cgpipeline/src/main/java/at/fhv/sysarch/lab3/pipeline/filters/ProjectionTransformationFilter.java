@@ -8,17 +8,11 @@ import javafx.scene.paint.Color;
 
 public class ProjectionTransformationFilter implements IFilter<Pair<Face, Color>,Pair<Face,Color>>, IFilterOut<Pair<Face,Color>> {
 
-    private IFilter<Pair<Face, Color>, ?> successor;
     private PipelineData pd;
     private Pipe<Pair<Face, Color>> pipeSuccessor;
 
     public ProjectionTransformationFilter(PipelineData pd){
         this.pd = pd;
-    }
-
-    @Override
-    public void setSuccessor(IFilter<Pair<Face, Color>, ?> successor) {
-        this.successor = successor;
     }
 
     @Override

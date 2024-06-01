@@ -7,7 +7,6 @@ import java.util.*;
 
 public class DepthSorting implements IFilter<Face,Face>, IFilterOut<Face> {
 
-    private IFilter<Face, ?> successor;
     private static Vec3 camera;
     private Pipe<Face> pipeSuccessor;
 
@@ -21,11 +20,6 @@ public class DepthSorting implements IFilter<Face,Face>, IFilterOut<Face> {
         float v2 = (o2.getV1().getZ() + o2.getV2().getZ() + o2.getV3().getZ() - cam) / 3;
         return Float.compare(v2, v1);
     });
-
-    @Override
-    public void setSuccessor(IFilter<Face, ?> successor) {
-        this.successor = successor;
-    }
 
     @Override
     public void setPipeSuccessor(Pipe<Face> pipe) {

@@ -6,14 +6,8 @@ import com.hackoeur.jglm.Vec4;
 
 public class BackfaceCulling implements IFilter<Face, Face>, IFilterOut<Face> {
 
-    private IFilter<Face, ?> successor;
     private Vec3 camera;
     private Pipe<Face> pipeSuccessor;
-
-    @Override
-    public void setSuccessor(IFilter<Face, ?> successor) {
-        this.successor = successor;
-    }
 
     @Override
     public void setPipeSuccessor(Pipe<Face> pipe) {

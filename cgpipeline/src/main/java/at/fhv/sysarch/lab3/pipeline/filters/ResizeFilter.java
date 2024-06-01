@@ -4,12 +4,7 @@ import at.fhv.sysarch.lab3.obj.Face;
 
 public class ResizeFilter implements IFilter<Face, Face>, IFilterOut<Face> {
 
-    private IFilter<Face, ?> successor;
     private Pipe<Face> pipeSuccessor;
-
-    public void setSuccessor(IFilter<Face, ?> r) {
-        this.successor = r;
-    }
 
     @Override
     public void setPipeSuccessor(Pipe<Face> pipe) {

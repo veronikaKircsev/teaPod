@@ -20,13 +20,13 @@ public class PushPipelineFactory {
         screenSpacePipe.setSuccessor(r);
         // perform perspective division to screen coordinates
         ScreenSpaceFilter screenSpace = new ScreenSpaceFilter(pd.getViewportTransform());
-        screenSpace.setPipe(screenSpacePipe);
+        screenSpace.setPipeSuccessor(screenSpacePipe);
 
         Pipe<Pair<Face, Color>> projectionTransfomationPipe = new Pipe<>();
         projectionTransfomationPipe.setSuccessor(screenSpace);
         //perform projection transformation on VIEW SPACE coordinates
         ProjectionTransformationFilter projectionTransformationFilter = new ProjectionTransformationFilter(pd);
-        projectionTransformationFilter.setPipe(projectionTransfomationPipe);
+        projectionTransformationFilter.setPipeSuccessor(projectionTransfomationPipe);
 
         Pipe<Pair<Face, Color>> colorPipe = new Pipe<>();
         // lighting can be switched on/off
@@ -35,7 +35,7 @@ public class PushPipelineFactory {
             Pipe<Pair<Face, Color>> lightingPipe = new Pipe<>();
             lightingPipe.setSuccessor(projectionTransformationFilter);
             Lighting lighting = new Lighting(pd.getLightPos());
-            lighting.setPipe(lightingPipe);
+            lighting.setPipeSuccessor(lightingPipe);
             colorPipe.setSuccessor(lighting);
 
 
@@ -45,37 +45,37 @@ public class PushPipelineFactory {
 
         //add coloring (space unimportant)
         Coloring coloring = new Coloring(pd.getModelColor());
-        coloring.setPipe(colorPipe);
+        coloring.setPipeSuccessor(colorPipe);
 
         Pipe<Face> depthSortingPipe = new Pipe<>();
         depthSortingPipe.setSuccessor(coloring);
         // perform depth sorting in VIEW SPACE
         DepthSorting depthSorting = new DepthSorting(pd.getViewingEye());
-        depthSorting.setPipe(depthSortingPipe);
+        depthSorting.setPipeSuccessor(depthSortingPipe);
 
 
         Pipe<Face> backFacePipe = new Pipe<>();
         backFacePipe.setSuccessor(depthSorting);
         // perform backface culling in VIEW SPACE
         BackfaceCulling backfaceCulling = new BackfaceCulling(pd.getViewingEye());
-        backfaceCulling.setPipe(backFacePipe);
+        backfaceCulling.setPipeSuccessor(backFacePipe);
 
         Pipe<Face> pipe = new Pipe<>();
         pipe.setSuccessor(backfaceCulling);
         ResizeFilter filter = new ResizeFilter();
-        filter.setPipe(pipe);
+        filter.setPipeSuccessor(pipe);
 
         Pipe<Face> transFilterPipe = new Pipe<>();
         transFilterPipe.setSuccessor(filter);
         //perform model-view transformation from model to VIEW SPACE coordinates
         ModelViewTransformationFilter transFilter = new ModelViewTransformationFilter();
-        transFilter.setPipe(transFilterPipe);
+        transFilter.setPipeSuccessor(transFilterPipe);
 
         Pipe<Face> sourcePipe = new Pipe<>();
         sourcePipe.setSuccessor(transFilter);
         // push from the source (model)
         SourceSingle source = new SourceSingle();
-        source.setPipe(sourcePipe);
+        source.setPipeSuccessor(sourcePipe);
 
         // returning an animation renderer which handles clearing of the
         // viewport and computation of the fraction

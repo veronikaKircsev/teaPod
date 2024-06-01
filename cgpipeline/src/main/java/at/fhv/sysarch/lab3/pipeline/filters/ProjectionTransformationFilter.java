@@ -6,11 +6,11 @@ import at.fhv.sysarch.lab3.pipeline.data.Pair;
 import com.hackoeur.jglm.Vec4;
 import javafx.scene.paint.Color;
 
-public class ProjectionTransformationFilter implements IFilter<Pair<Face, Color>,Pair<Face,Color> > {
+public class ProjectionTransformationFilter implements IFilter<Pair<Face, Color>,Pair<Face,Color>>, IFilterOut<Pair<Face,Color>> {
 
     private IFilter<Pair<Face, Color>, ?> successor;
     private PipelineData pd;
-    private Pipe<Pair<Face, Color>> pipe;
+    private Pipe<Pair<Face, Color>> pipeSuccessor;
 
     public ProjectionTransformationFilter(PipelineData pd){
         this.pd = pd;
@@ -21,8 +21,9 @@ public class ProjectionTransformationFilter implements IFilter<Pair<Face, Color>
         this.successor = successor;
     }
 
-    public void setPipe(Pipe<Pair<Face, Color>> pipe) {
-        this.pipe = pipe;
+    @Override
+    public void setPipeSuccessor(Pipe<Pair<Face, Color>> pipe) {
+        this.pipeSuccessor = pipe;
     }
 
     @Override
@@ -34,8 +35,6 @@ public class ProjectionTransformationFilter implements IFilter<Pair<Face, Color>
         Vec4 v1ProjNorm = pd.getProjTransform().multiply(input.fst().getN1());
         Vec4 v2ProjNorm = pd.getProjTransform().multiply(input.fst().getN2());
         Vec4 v3ProjNorm = pd.getProjTransform().multiply(input.fst().getN3());
-
-
-        pipe.write(new Pair<>(new Face(v1Proj,v2Proj,v3Proj,v1ProjNorm,v2ProjNorm,v3ProjNorm),input.snd()));
+        pipeSuccessor.write(new Pair<>(new Face(v1Proj,v2Proj,v3Proj,v1ProjNorm,v2ProjNorm,v3ProjNorm),input.snd()));
     }
 }

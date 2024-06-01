@@ -34,8 +34,16 @@ public class Source implements IFilterOut<Face>, IFilterIn<Model> {
     }
 
     @Override
+    public void setPipePredecessor(Pipe<Model> successor) {
+
+    }
+
     public void setSuccessor(IFilterOut<Face> successor) {
 
     }
 
+    @Override
+    public void setPipeSuccessor(Pipe<Face> predecessor) {
+
+    }
 }

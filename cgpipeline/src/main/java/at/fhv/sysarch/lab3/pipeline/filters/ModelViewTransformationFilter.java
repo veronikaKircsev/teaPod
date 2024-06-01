@@ -4,20 +4,20 @@ import at.fhv.sysarch.lab3.obj.Face;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Vec4;
 
-public class ModelViewTransformationFilter implements IFilter<Face, Face>{
+public class ModelViewTransformationFilter implements IFilter<Face, Face>, IFilterOut<Face>{
     private Mat4 transMatrix;
     //successor es sich um den nächsten Filter in einer Kette von Filtern handelt
     private IFilter<Face, ?> successor;
-    private Pipe<Face> pipe;
+    private Pipe<Face> pipeSuccessor;
 
     @Override
     public void setSuccessor(IFilter<Face, ?> successor) {
         this.successor = successor;
     }
 
-    public void setPipe(Pipe<Face> pipe) {
+    public void setPipeSuccessor(Pipe<Face> pipe) {
 
-        this.pipe = pipe;
+        this.pipeSuccessor = pipe;
     }
 
     public void setTransMatrix(Mat4 matrix) {
@@ -50,7 +50,7 @@ public class ModelViewTransformationFilter implements IFilter<Face, Face>{
 
 
         // Weitergabe des transformierten Face-Objekts an den nächsten Filter in der Kette
-        pipe.write(transFace);
+        pipeSuccessor.write(transFace);
 
     }
 }

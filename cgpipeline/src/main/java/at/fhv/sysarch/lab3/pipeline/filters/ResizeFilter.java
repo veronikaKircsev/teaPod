@@ -2,22 +2,24 @@ package at.fhv.sysarch.lab3.pipeline.filters;
 
 import at.fhv.sysarch.lab3.obj.Face;
 
-public class ResizeFilter implements IFilter<Face, Face> {
+public class ResizeFilter implements IFilter<Face, Face>, IFilterOut<Face> {
 
     private IFilter<Face, ?> successor;
-    private Pipe<Face> pipe;
+    private Pipe<Face> pipeSuccessor;
 
     public void setSuccessor(IFilter<Face, ?> r) {
         this.successor = r;
     }
-    public void setPipe(Pipe<Face> pipe) {
-        this.pipe = pipe;
+
+    @Override
+    public void setPipeSuccessor(Pipe<Face> pipe) {
+        this.pipeSuccessor = pipe;
     }
 
     public void write(Face face) {
         if (face != null) {
             Face newFace = new Face(face.getV1().multiply(100), face.getV2().multiply(100), face.getV3().multiply(100), face);
-            pipe.write(newFace);
+            pipeSuccessor.write(newFace);
         }
     }
 }

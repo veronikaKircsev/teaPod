@@ -2,7 +2,7 @@ package at.fhv.sysarch.lab3.pipeline.filters;
 
 import at.fhv.sysarch.lab3.obj.Face;
 
-public class ResizeFilter implements IFilter<Face, Face>, IFilterOut<Face>, IFilterIn<Face,Face> {
+public class ResizeFilter implements IFilterPush<Face, Face>, IFilterPull<Face,Face> {
 
     private Pipe<Face> pipeSuccessor;
     private Pipe<Face> predecessor;

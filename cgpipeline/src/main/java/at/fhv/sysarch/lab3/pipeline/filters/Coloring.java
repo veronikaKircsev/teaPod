@@ -4,8 +4,7 @@ import at.fhv.sysarch.lab3.obj.Face;
 import at.fhv.sysarch.lab3.pipeline.data.Pair;
 import javafx.scene.paint.Color;
 
-public class Coloring implements IFilter<Face, Pair<Face, Color>>, IFilterOut<Pair<Face, Color>>,
-IFilterIn<Face, Pair<Face, Color>>{
+public class Coloring implements IFilterPush<Face, Pair<Face, Color>>, IFilterPull<Face, Pair<Face, Color>> {
 
     private Color coloring;
     private Pipe<Pair<Face, Color>> pipeSuccessor;

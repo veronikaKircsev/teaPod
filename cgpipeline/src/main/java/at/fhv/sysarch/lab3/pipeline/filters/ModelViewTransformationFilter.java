@@ -4,8 +4,8 @@ import at.fhv.sysarch.lab3.obj.Face;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Vec4;
 
-public class ModelViewTransformationFilter implements IFilter<Face, Face>, IFilterOut<Face>,
-IFilterIn<Face, Face>{
+public class ModelViewTransformationFilter implements IFilterPush<Face, Face>,
+        IFilterPull<Face, Face> {
 
     private Mat4 transMatrix;
     private Pipe<Face> pipeSuccessor;

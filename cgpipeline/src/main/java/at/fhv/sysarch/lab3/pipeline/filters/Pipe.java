@@ -3,16 +3,15 @@ package at.fhv.sysarch.lab3.pipeline.filters;
 
 public class Pipe<T> {
 
-    private IFilter<T, ?> filterSuccessor;
-    private IFilter<?, T> filterPredecessor;
-    //public I input;
+    private IFilterPush<T, ?> filterSuccessor;
+    private IFilterPull<?, T> filterPredecessor;
 
 
-    public void setSuccessor(IFilter<T, ?> filter) {
+    public void setSuccessor(IFilterPush<T, ?> filter) {
         this.filterSuccessor = filter;
     }
 
-    public void setPredecessor(IFilter<?, T> filter) {
+    public void setPredecessor(IFilterPull<?, T> filter) {
         this.filterPredecessor = filter;
     }
 

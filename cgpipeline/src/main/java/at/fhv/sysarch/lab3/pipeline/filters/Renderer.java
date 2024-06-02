@@ -6,7 +6,7 @@ import at.fhv.sysarch.lab3.rendering.RenderingMode;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-public class Renderer implements IFilter<Pair<Face, Color>, Face>, IFilterIn<Pair<Face, Color>, Face>{
+public class Renderer implements IFilterPush<Pair<Face, Color>, Face>, IFilterPull<Pair<Face, Color>, Face> {
 
     //grafischen Kontexteinstellungen zuzugreifen und sie zu manipulieren
     //GraphicsContext ist eine Klasse aus JavaFX, die verwendet wird,
@@ -23,6 +23,11 @@ public class Renderer implements IFilter<Pair<Face, Color>, Face>, IFilterIn<Pai
         this.gpc = gpc;
         this.renderingMode = renderingMode;
         this.modelColor = modelColor;
+    }
+
+    @Override
+    public void setPipeSuccessor(Pipe<Face> successor) {
+
     }
 
     public void write(Pair<Face, Color> input) {

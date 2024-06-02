@@ -5,8 +5,8 @@ import at.fhv.sysarch.lab3.pipeline.data.Pair;
 import com.hackoeur.jglm.Vec3;
 import javafx.scene.paint.Color;
 
-public class Lighting implements IFilter<Pair<Face, Color>,Pair<Face,Color>>, IFilterOut<Pair<Face,Color>>,
-IFilterIn<Pair<Face,Color>, Pair<Face,Color>>{
+public class Lighting implements IFilterPush<Pair<Face,Color>, Pair<Face,Color>>,
+        IFilterPull<Pair<Face,Color>, Pair<Face,Color>> {
 
     private final Vec3 unitVector;
     private Pipe<Pair<Face,Color>> pipeSuccessor;

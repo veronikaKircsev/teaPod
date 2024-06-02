@@ -5,8 +5,7 @@ import at.fhv.sysarch.lab3.pipeline.data.Pair;
 import com.hackoeur.jglm.Mat4;
 import javafx.scene.paint.Color;
 
-public class ScreenSpaceFilter implements IFilter<Pair<Face, Color>, Pair<Face, Color>>,
-        IFilterOut<Pair<Face, Color>>, IFilterIn<Pair<Face, Color>, Pair<Face, Color>>{
+public class ScreenSpaceFilter implements IFilterPush<Pair<Face, Color>, Pair<Face, Color>>, IFilterPull<Pair<Face, Color>, Pair<Face, Color>> {
 
     private Mat4 portTrans;
     private Pipe<Pair<Face, Color>> pipeSuccessor;

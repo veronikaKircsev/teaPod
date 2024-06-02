@@ -6,8 +6,8 @@ import at.fhv.sysarch.lab3.pipeline.data.Pair;
 import com.hackoeur.jglm.Vec4;
 import javafx.scene.paint.Color;
 
-public class ProjectionTransformationFilter implements IFilter<Pair<Face, Color>,Pair<Face,Color>>, IFilterOut<Pair<Face,Color>>,
-IFilterIn<Pair<Face, Color>,Pair<Face,Color>>{
+public class ProjectionTransformationFilter implements IFilterPush<Pair<Face,Color>, Pair<Face,Color>>,
+        IFilterPull<Pair<Face, Color>, Pair<Face,Color>> {
 
     private PipelineData pd;
     private Pipe<Pair<Face, Color>> pipeSuccessor;

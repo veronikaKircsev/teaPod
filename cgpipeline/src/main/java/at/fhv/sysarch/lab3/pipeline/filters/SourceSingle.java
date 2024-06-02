@@ -5,7 +5,7 @@ import at.fhv.sysarch.lab3.obj.Model;
 
 import java.util.List;
 
-public class SourceSingle implements IFilter<Model, Face>, IFilterOut<Face>, IFilterIn<Model,Face> {
+public class SourceSingle implements IFilterPush<Model, Face>, IFilterPull<Model,Face> {
 
     private Pipe<Face> pipeSuccessor;
     private Pipe<Model> predecessor;

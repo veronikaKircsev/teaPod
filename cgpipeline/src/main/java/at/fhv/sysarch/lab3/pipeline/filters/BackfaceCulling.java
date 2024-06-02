@@ -4,8 +4,7 @@ import at.fhv.sysarch.lab3.obj.Face;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.Vec4;
 
-public class BackfaceCulling implements IFilter<Face, Face>, IFilterOut<Face>,
-IFilterIn<Face, Face>{
+public class BackfaceCulling implements IFilterPush<Face, Face>, IFilterPull<Face, Face> {
 
     private Vec3 camera;
     private Pipe<Face> pipeSuccessor;

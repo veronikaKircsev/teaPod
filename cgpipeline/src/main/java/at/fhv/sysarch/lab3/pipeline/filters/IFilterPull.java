@@ -1,7 +1,7 @@
 package at.fhv.sysarch.lab3.pipeline.filters;
 
-public interface IFilterIn<I,O> {
+public interface IFilterPull<I, O> {
 
-    O read();
     void setPipePredecessor(Pipe<I> predecessor);
+    O read();
 }

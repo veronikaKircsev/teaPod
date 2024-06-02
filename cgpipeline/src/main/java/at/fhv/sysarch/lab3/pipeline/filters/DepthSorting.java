@@ -5,8 +5,7 @@ import com.hackoeur.jglm.Vec3;
 
 import java.util.*;
 
-public class DepthSorting implements IFilter<Face,Face>, IFilterOut<Face>,
-IFilterIn<Face,Face>{
+public class DepthSorting implements IFilterPush<Face, Face>, IFilterPull<Face,Face> {
 
     private static Vec3 camera;
     private Pipe<Face> pipeSuccessor;

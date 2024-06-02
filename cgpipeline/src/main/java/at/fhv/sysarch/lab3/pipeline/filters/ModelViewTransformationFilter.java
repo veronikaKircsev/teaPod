@@ -4,10 +4,12 @@ import at.fhv.sysarch.lab3.obj.Face;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Vec4;
 
-public class ModelViewTransformationFilter implements IFilter<Face, Face>, IFilterOut<Face>{
+public class ModelViewTransformationFilter implements IFilter<Face, Face>, IFilterOut<Face>,
+IFilterIn<Face, Face>{
 
     private Mat4 transMatrix;
     private Pipe<Face> pipeSuccessor;
+    private Pipe<Face> predecessor;
 
     public void setPipeSuccessor(Pipe<Face> pipe) {
 
@@ -19,6 +21,25 @@ public class ModelViewTransformationFilter implements IFilter<Face, Face>, IFilt
     }
 
     public void write(Face input) {
+        pipeSuccessor.write(transform(input));
+
+    }
+
+    @Override
+    public Face read() {
+        Face input = pipeSuccessor.read()!=null ? pipeSuccessor.read() : null;
+        if (input != null) {
+            return transform(input);
+        }
+        return null;
+    }
+
+    @Override
+    public void setPipePredecessor(Pipe<Face> predecessor) {
+        this.predecessor = predecessor;
+    }
+
+    private Face transform(Face input){
         // Transformation der Eckpunkte des Gesichts
         Vec4 v1new = transMatrix.multiply(input.getV1());
         //Vec4: Eine Klasse, die einen vierdimensionalen Vektor darstellt,
@@ -39,10 +60,8 @@ public class ModelViewTransformationFilter implements IFilter<Face, Face>, IFilt
         //Face: Eine Klasse, die ein Gesicht eines 3D-Objekts darstellt, mit Methoden
         // zum Abrufen der Eckpunkte (getV1(), getV2(), getV3())
         // und Normalen (getN1(), getN2(), getN3()).
-        Face transFace = new Face(v1new, v2new, v3new, v1NormalNew, v2NormalNew, v3NormalNew);
+        return new Face(v1new, v2new, v3new, v1NormalNew, v2NormalNew, v3NormalNew);
 
         // Weitergabe des transformierten Face-Objekts an den nächsten Filter in der Kette
-        pipeSuccessor.write(transFace);
-
     }
 }

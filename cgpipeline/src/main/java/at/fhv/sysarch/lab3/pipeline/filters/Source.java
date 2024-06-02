@@ -5,19 +5,20 @@ import at.fhv.sysarch.lab3.obj.Model;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Vec4;
 
-public class Source implements IFilterOut<Face>, IFilterIn<Model> {
+public class Source implements IFilterOut<Face>, IFilterIn<Model, Face> {
 
-    private IFilterIn<Face> successor;
+    //private IFilterIn<Model> successor;
     private Mat4 transMatrix;
 
-    public void setSuccessor(IFilterIn<Face> r) {
-        this.successor = r;
-    }
+    //public void setSuccessor(IFilterIn<Model> r) {
+    //    this.successor = r;
+   // }
 
     public void setTransMatrix(Mat4 matrix) {
         this.transMatrix = matrix;
     }
 
+    /*
     public void write(Model model) {
         model.getFaces().forEach(f -> {
             Vec4 v1new = transMatrix.multiply(f.getV1());
@@ -33,6 +34,21 @@ public class Source implements IFilterOut<Face>, IFilterIn<Model> {
         });
     }
 
+     */
+
+    @Override
+    public Face read() {
+        return null;
+    }
+
+    /*
+        @Override
+        public Face read() {
+            return null;
+        }
+
+
+     */
     @Override
     public void setPipePredecessor(Pipe<Model> successor) {
 

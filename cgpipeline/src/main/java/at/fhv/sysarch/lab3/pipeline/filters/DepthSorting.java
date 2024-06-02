@@ -5,10 +5,12 @@ import com.hackoeur.jglm.Vec3;
 
 import java.util.*;
 
-public class DepthSorting implements IFilter<Face,Face>, IFilterOut<Face> {
+public class DepthSorting implements IFilter<Face,Face>, IFilterOut<Face>,
+IFilterIn<Face,Face>{
 
     private static Vec3 camera;
     private Pipe<Face> pipeSuccessor;
+    private Pipe<Face> predecessor;
 
     public DepthSorting(Vec3 camera) {
         this.camera = camera;
@@ -28,10 +30,8 @@ public class DepthSorting implements IFilter<Face,Face>, IFilterOut<Face> {
 
     @Override
     public void write(Face input) {
-
         if (input != null) {
             faces.add(input);
-
             while (!faces.isEmpty()) {
                 Face face = faces.poll();
                 if (pipeSuccessor != null && face != null) {
@@ -41,5 +41,27 @@ public class DepthSorting implements IFilter<Face,Face>, IFilterOut<Face> {
         }
 
     }
+
+    @Override
+    public Face read() {
+        Face input = predecessor.read() != null ? predecessor.read() : null;
+        if (input != null) {
+            faces.add(input);
+            while (!faces.isEmpty()) {
+                Face face = faces.poll();
+                if (predecessor != null && face != null) {
+                    return face;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void setPipePredecessor(Pipe<Face> predecessor) {
+        this.predecessor = predecessor;
+    }
+
+
 
 }

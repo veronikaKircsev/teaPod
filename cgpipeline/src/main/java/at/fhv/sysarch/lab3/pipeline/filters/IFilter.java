@@ -4,4 +4,7 @@ public interface IFilter<I, O> {
 
     public void write(I input);
 
+    O read(
+
+    );
 }

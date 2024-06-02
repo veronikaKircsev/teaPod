@@ -6,7 +6,7 @@ import at.fhv.sysarch.lab3.rendering.RenderingMode;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-public class Renderer implements IFilter<Pair<Face, Color>, Face>{
+public class Renderer implements IFilter<Pair<Face, Color>, Face>, IFilterIn<Pair<Face, Color>, Face>{
 
     //grafischen Kontexteinstellungen zuzugreifen und sie zu manipulieren
     //GraphicsContext ist eine Klasse aus JavaFX, die verwendet wird,
@@ -17,6 +17,7 @@ public class Renderer implements IFilter<Pair<Face, Color>, Face>{
     private final GraphicsContext gpc;
     private final Color modelColor;
     private final RenderingMode renderingMode;
+    private Pipe<Pair<Face, Color>> predecessor;
 
     public Renderer(GraphicsContext gpc, RenderingMode renderingMode, Color modelColor) {
         this.gpc = gpc;
@@ -25,6 +26,25 @@ public class Renderer implements IFilter<Pair<Face, Color>, Face>{
     }
 
     public void write(Pair<Face, Color> input) {
+        transform(input);
+    }
+
+    @Override
+    public Face read() {
+        Pair<Face, Color> input = predecessor.read()!= null ? predecessor.read() : null;
+        if (input!=null) {
+            transform(input);
+        }
+        return null;
+    }
+
+    @Override
+    public void setPipePredecessor(Pipe<Pair<Face, Color>> predecessor) {
+        this.predecessor = predecessor;
+
+    }
+
+    public void transform(Pair<Face, Color> input) {
         gpc.setStroke(input.snd());
         gpc.setFill(input.snd());
         if(this.renderingMode == RenderingMode.POINT) {
@@ -40,17 +60,12 @@ public class Renderer implements IFilter<Pair<Face, Color>, Face>{
             double[] cordX = new double[]{ input.fst().getV1().getX(), input.fst().getV2().getX(), input.fst().getV3().getX() };
             double[] cordY = new double[]{ input.fst().getV1().getY(), input.fst().getV2().getY(), input.fst().getV3().getY()};
             gpc.fillPolygon(cordX,
-              cordY,3);
+                    cordY,3);
             gpc.strokePolygon(cordX, cordY, 3);
 
         }
-
-
     }
 
-    public void setSuccessor(IFilter<Face, ?> successor) {
-
-    }
 
 
 }

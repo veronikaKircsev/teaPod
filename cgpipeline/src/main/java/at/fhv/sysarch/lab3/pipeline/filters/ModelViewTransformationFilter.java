@@ -4,12 +4,15 @@ import at.fhv.sysarch.lab3.obj.Face;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Vec4;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ModelViewTransformationFilter implements IFilterPush<Face, Face>,
-        IFilterPull<Face, Face> {
+        IFilterPull<List<Face>, List<Face>> {
 
     private Mat4 transMatrix;
     private Pipe<Face> pipeSuccessor;
-    private Pipe<Face> predecessor;
+    private Pipe<List<Face>> predecessor;
 
     public void setPipeSuccessor(Pipe<Face> pipe) {
 
@@ -26,16 +29,21 @@ public class ModelViewTransformationFilter implements IFilterPush<Face, Face>,
     }
 
     @Override
-    public Face read() {
-        Face input = pipeSuccessor.read()!=null ? pipeSuccessor.read() : null;
-        if (input != null) {
-            return transform(input);
+    public List<Face> read() {
+        try {
+            List<Face> input = predecessor.read();
+            List<Face> output = new ArrayList<>();
+            for (Face face : input) {
+                output.add(transform(face));
+            }
+            return output;
+        } catch (Exception e) {
+            return null;
         }
-        return null;
     }
 
     @Override
-    public void setPipePredecessor(Pipe<Face> predecessor) {
+    public void setPipePredecessor(Pipe<List<Face>> predecessor) {
         this.predecessor = predecessor;
     }
 

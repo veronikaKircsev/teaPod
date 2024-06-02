@@ -6,7 +6,9 @@ import at.fhv.sysarch.lab3.rendering.RenderingMode;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-public class Renderer implements IFilterPush<Pair<Face, Color>, Face>, IFilterPull<Pair<Face, Color>, Face> {
+import java.util.List;
+
+public class Renderer implements IFilterPush<Pair<Face, Color>, Face>, IFilterPull<List<Pair<Face, Color>>, Face> {
 
     //grafischen Kontexteinstellungen zuzugreifen und sie zu manipulieren
     //GraphicsContext ist eine Klasse aus JavaFX, die verwendet wird,
@@ -17,7 +19,7 @@ public class Renderer implements IFilterPush<Pair<Face, Color>, Face>, IFilterPu
     private final GraphicsContext gpc;
     private final Color modelColor;
     private final RenderingMode renderingMode;
-    private Pipe<Pair<Face, Color>> predecessor;
+    private Pipe<List<Pair<Face, Color>>> predecessor;
 
     public Renderer(GraphicsContext gpc, RenderingMode renderingMode, Color modelColor) {
         this.gpc = gpc;
@@ -34,19 +36,33 @@ public class Renderer implements IFilterPush<Pair<Face, Color>, Face>, IFilterPu
         transform(input);
     }
 
+    public void start() {
+        try {
+            List<Pair<Face, Color>> input = predecessor.read();
+            for (Pair<Face, Color> child : input) {
+                transform(child);
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
     @Override
     public Face read() {
-        Pair<Face, Color> input = predecessor.read()!= null ? predecessor.read() : null;
-        if (input!=null) {
-            transform(input);
+        try {
+            List<Pair<Face, Color>> input = predecessor.read();
+            for (Pair<Face, Color> child : input) {
+                System.out.println(child);
+                transform(child);
+            }
+        } catch (Exception e) {
+            System.out.println(e);
         }
         return null;
     }
 
     @Override
-    public void setPipePredecessor(Pipe<Pair<Face, Color>> predecessor) {
+    public void setPipePredecessor(Pipe<List<Pair<Face, Color>>> predecessor) {
         this.predecessor = predecessor;
-
     }
 
     public void transform(Pair<Face, Color> input) {

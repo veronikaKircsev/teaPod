@@ -7,7 +7,7 @@ public class Source implements IFilterPull<Model, Model> {
     private Model model;
 
     public void setModel(Model model) {
-        this.model = model;
+            this.model = model;
     }
 
     @Override

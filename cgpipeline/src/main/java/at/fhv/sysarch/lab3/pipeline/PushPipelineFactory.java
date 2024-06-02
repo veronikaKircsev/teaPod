@@ -62,6 +62,7 @@ public class PushPipelineFactory {
 
         Pipe<Face> pipe = new Pipe<>();
         pipe.setSuccessor(backfaceCulling);
+
         ResizeFilter filter = new ResizeFilter();
         filter.setPipeSuccessor(pipe);
 

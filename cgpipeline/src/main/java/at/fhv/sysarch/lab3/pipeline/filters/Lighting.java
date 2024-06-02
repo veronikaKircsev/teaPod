@@ -5,12 +5,15 @@ import at.fhv.sysarch.lab3.pipeline.data.Pair;
 import com.hackoeur.jglm.Vec3;
 import javafx.scene.paint.Color;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Lighting implements IFilterPush<Pair<Face,Color>, Pair<Face,Color>>,
-        IFilterPull<Pair<Face,Color>, Pair<Face,Color>> {
+        IFilterPull<List<Pair<Face,Color>>, List<Pair<Face,Color>>> {
 
     private final Vec3 unitVector;
     private Pipe<Pair<Face,Color>> pipeSuccessor;
-    private Pipe<Pair<Face, Color>> predecessor;
+    private Pipe<List<Pair<Face, Color>>> predecessor;
 
     public Lighting(Vec3 unitVector) {
         this.unitVector = unitVector;
@@ -27,16 +30,21 @@ public class Lighting implements IFilterPush<Pair<Face,Color>, Pair<Face,Color>>
     }
 
     @Override
-    public Pair<Face, Color> read() {
-        Pair<Face, Color> input = pipeSuccessor.read() != null ? pipeSuccessor.read() : null;
-        if (input!=null) {
-            return transform(input);
+    public List<Pair<Face, Color>> read() {
+        try {
+            List<Pair<Face, Color>> input = predecessor.read();
+            List<Pair<Face, Color>> output = new ArrayList<>();
+            for (Pair<Face, Color> pair : input) {
+                output.add(transform(pair));
+            }
+            return output;
+        } catch (Exception e) {
+            return null;
         }
-        return null;
     }
 
     @Override
-    public void setPipePredecessor(Pipe<Pair<Face, Color>> predecessor) {
+    public void setPipePredecessor(Pipe<List<Pair<Face, Color>>> predecessor) {
         this.predecessor = predecessor;
     }
 

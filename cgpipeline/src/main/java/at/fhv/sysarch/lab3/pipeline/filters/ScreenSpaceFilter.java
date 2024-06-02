@@ -5,11 +5,14 @@ import at.fhv.sysarch.lab3.pipeline.data.Pair;
 import com.hackoeur.jglm.Mat4;
 import javafx.scene.paint.Color;
 
-public class ScreenSpaceFilter implements IFilterPush<Pair<Face, Color>, Pair<Face, Color>>, IFilterPull<Pair<Face, Color>, Pair<Face, Color>> {
+import java.util.ArrayList;
+import java.util.List;
+
+public class ScreenSpaceFilter implements IFilterPush<Pair<Face, Color>, Pair<Face, Color>>, IFilterPull<List<Pair<Face, Color>>, List<Pair<Face, Color>>> {
 
     private Mat4 portTrans;
     private Pipe<Pair<Face, Color>> pipeSuccessor;
-    private Pipe<Pair<Face, Color>> predecessor;
+    private Pipe<List<Pair<Face, Color>>> predecessor;
 
     public ScreenSpaceFilter(Mat4 portTrans) {
         this.portTrans = portTrans;
@@ -27,13 +30,18 @@ public class ScreenSpaceFilter implements IFilterPush<Pair<Face, Color>, Pair<Fa
     }
 
     @Override
-    public Pair<Face, Color> read() {
-        Pair<Face, Color> input = predecessor.read() != null ? predecessor.read(): null;
-        if (input == null) {
+    public List<Pair<Face, Color>> read() {
+        try {
+            List<Pair<Face, Color>> input = predecessor.read();
+            List<Pair<Face, Color>> output = new ArrayList<>();
+            for (Pair<Face, Color> pair : input) {
+                output.add(transform(pair));
+            }
+            return output;
+        } catch (Exception e) {
             return null;
-        } else {
-            return transform(input);
         }
+
     }
 
     private Pair<Face, Color> transform(Pair<Face, Color> input) {
@@ -43,7 +51,7 @@ public class ScreenSpaceFilter implements IFilterPush<Pair<Face, Color>, Pair<Fa
     }
 
     @Override
-    public void setPipePredecessor(Pipe<Pair<Face, Color>> predecessor) {
+    public void setPipePredecessor(Pipe<List<Pair<Face, Color>>> predecessor) {
         this.predecessor = predecessor;
     }
 

@@ -5,17 +5,17 @@ import com.hackoeur.jglm.Vec3;
 
 import java.util.*;
 
-public class DepthSorting implements IFilterPush<Face, Face>, IFilterPull<Face,Face> {
+public class DepthSorting implements IFilterPush<Face, Face>, IFilterPull<List<Face>, List<Face>> {
 
     private static Vec3 camera;
     private Pipe<Face> pipeSuccessor;
-    private Pipe<Face> predecessor;
+    private Pipe<List<Face>> predecessor;
 
     public DepthSorting(Vec3 camera) {
         this.camera = camera;
     }
 
-    private static Queue<Face> faces = new PriorityQueue<>((o1, o2) -> {
+    private Queue<Face> faces = new PriorityQueue<>((o1, o2) -> {
         float cam = camera.getZ() * 3;
         float v1 =  (o1.getV1().getZ() + o1.getV2().getZ() + o1.getV3().getZ() - cam) / 3;
         float v2 = (o2.getV1().getZ() + o2.getV2().getZ() + o2.getV3().getZ() - cam) / 3;
@@ -42,22 +42,26 @@ public class DepthSorting implements IFilterPush<Face, Face>, IFilterPull<Face,F
     }
 
     @Override
-    public Face read() {
-        Face input = predecessor.read() != null ? predecessor.read() : null;
-        if (input != null) {
-            faces.add(input);
-            while (!faces.isEmpty()) {
-                Face face = faces.poll();
-                if (predecessor != null && face != null) {
-                    return face;
-                }
+    public List<Face> read() {
+        try {
+            List<Face> input = predecessor.read();
+            for (Face face : input) {
+                faces.add(face);
             }
+            List<Face> output = new ArrayList<>();
+            for (Face face : faces) {
+                output.add(face);
+            }
+            faces.clear();
+            return output;
+        } catch (Exception e) {
+
+            return null;
         }
-        return null;
     }
 
     @Override
-    public void setPipePredecessor(Pipe<Face> predecessor) {
+    public void setPipePredecessor(Pipe<List<Face>> predecessor) {
         this.predecessor = predecessor;
     }
 

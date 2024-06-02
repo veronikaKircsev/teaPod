@@ -1,41 +1,95 @@
 package at.fhv.sysarch.lab3.pipeline;
 
 import at.fhv.sysarch.lab3.animation.AnimationRenderer;
+import at.fhv.sysarch.lab3.obj.Face;
 import at.fhv.sysarch.lab3.obj.Model;
-import at.fhv.sysarch.lab3.pipeline.filters.Pipe;
+import at.fhv.sysarch.lab3.pipeline.data.Pair;
+import at.fhv.sysarch.lab3.pipeline.filters.*;
+import com.hackoeur.jglm.Mat4;
+import com.hackoeur.jglm.Matrices;
 import javafx.animation.AnimationTimer;
+import javafx.scene.paint.Color;
+
+import java.util.List;
 
 public class PullPipelineFactory {
     public static AnimationTimer createPipeline(PipelineData pd) {
-        // TODO: pull from the source (model)
-        Pipe<Model> source = new Pipe<>();
+        // pull from the source (model)
+        Source source = new Source();
+        source.setModel(pd.getModel());
+        Pipe<Model> sourcePipe = new Pipe<>();
+        sourcePipe.setPredecessor(source);
 
-        // TODO 1. perform model-view transformation from model to VIEW SPACE coordinates
+        SourceSingle sourceSingle = new SourceSingle();
+        sourceSingle.setPipePredecessor(sourcePipe);
+        Pipe<List<Face>> singleSourcePipe = new Pipe<>();
+        singleSourcePipe.setPredecessor(sourceSingle);
+        // perform model-view transformation from model to VIEW SPACE coordinates
+        ModelViewTransformationFilter modelViewTransformationFilter = new ModelViewTransformationFilter();
+        modelViewTransformationFilter.setPipePredecessor(singleSourcePipe);
+        Pipe<List<Face>> viewPipe = new Pipe<>();
+        viewPipe.setPredecessor(modelViewTransformationFilter);
 
-        // TODO 2. perform backface culling in VIEW SPACE
+        ResizeFilter resizeFilter = new ResizeFilter();
+        resizeFilter.setPipePredecessor(viewPipe);
+        Pipe<List<Face>> resizePipe = new Pipe<>();
+        resizePipe.setPredecessor(resizeFilter);
 
-        // TODO 3. perform depth sorting in VIEW SPACE
+        // perform backface culling in VIEW SPACE
+        BackfaceCulling backfaceCulling = new BackfaceCulling(pd.getViewingEye());
+        backfaceCulling.setPipePredecessor(resizePipe);
+        Pipe<List<Face>> backFacePipe = new Pipe<>();
+        backFacePipe.setPredecessor(backfaceCulling);
 
-        // TODO 4. add coloring (space unimportant)
+        // perform depth sorting in VIEW SPACE
+        DepthSorting depthSorting = new DepthSorting(pd.getViewingEye());
+        depthSorting.setPipePredecessor(backFacePipe);
+        Pipe<List<Face>> depthPipe = new Pipe<>();
+        depthPipe.setPredecessor(depthSorting);
+
+        //add coloring (space unimportant)
+        Coloring color = new Coloring(pd.getModelColor());
+        color.setPipePredecessor(depthPipe);
+        Pipe<List<Pair<Face, Color>>> colorPipe = new Pipe<>();
+        colorPipe.setPredecessor(color);
 
         // lighting can be switched on/off
+        ProjectionTransformationFilter projectionTransformationFilter = new ProjectionTransformationFilter(pd);
+        Pipe<List<Pair<Face,Color>>> projectionPipe = new Pipe<>();
+        projectionPipe.setPredecessor(projectionTransformationFilter);
         if (pd.isPerformLighting()) {
-            // 4a. TODO perform lighting in VIEW SPACE
+            // perform lighting in VIEW SPACE
+            Lighting lighting = new Lighting(pd.getLightPos());
+            lighting.setPipePredecessor(colorPipe);
+            Pipe<List<Pair<Face, Color>>> lightingPipe = new Pipe<>();
+            lightingPipe.setPredecessor(lighting);
             
-            // 5. TODO perform projection transformation on VIEW SPACE coordinates
+            // perform projection transformation on VIEW SPACE coordinates
+            projectionTransformationFilter.setPipePredecessor(lightingPipe);
+
         } else {
-            // 5. TODO perform projection transformation
+            // perform projection transformation
+            projectionTransformationFilter.setPipePredecessor(colorPipe);
         }
 
         // TODO 6. perform perspective division to screen coordinates
 
+        ScreenSpaceFilter screenSpaceFilter = new ScreenSpaceFilter(pd.getViewportTransform());
+        screenSpaceFilter.setPipePredecessor(projectionPipe);
+        Pipe<List<Pair<Face, Color>>> screenSpacePipe = new Pipe<>();
+        screenSpacePipe.setPredecessor(screenSpaceFilter);
+
         // TODO 7. feed into the sink (renderer)
+        Renderer renderer = new Renderer(pd.getGraphicsContext(), pd.getRenderingMode(),pd.getModelColor());
+        renderer.setPipePredecessor(screenSpacePipe);
+
 
         // returning an animation renderer which handles clearing of the
         // viewport and computation of the praction
         return new AnimationRenderer(pd) {
             // TODO rotation variable goes in here
 
+            private float rotation = 0;
             /** This method is called for every frame from the JavaFX Animation
              * system (using an AnimationTimer, see AnimationRenderer). 
              * @param fraction the time which has passed since the last render call in a fraction of a second
@@ -43,6 +97,15 @@ public class PullPipelineFactory {
              */
             @Override
             protected void render(float fraction, Model model) {
+
+
+                rotation +=  (fraction)%360;
+
+                Mat4 rotMat = Matrices.rotate(rotation, pd.getModelRotAxis());
+                Mat4 transMat = pd.getModelTranslation().multiply(rotMat);
+                Mat4 viewMat = pd.getViewTransform().multiply(transMat);
+                modelViewTransformationFilter.setTransMatrix(viewMat);
+                renderer.start();
                 // TODO compute rotation in radians
 
                 // TODO create new model rotation matrix using pd.getModelRotAxis and Matrices.rotate

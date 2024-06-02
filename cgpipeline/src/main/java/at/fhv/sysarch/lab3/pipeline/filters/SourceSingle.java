@@ -5,7 +5,7 @@ import at.fhv.sysarch.lab3.obj.Model;
 
 import java.util.List;
 
-public class SourceSingle implements IFilterPush<Model, Face>, IFilterPull<Model,Face> {
+public class SourceSingle implements IFilterPush<Model, Face>, IFilterPull<Model,List<Face>> {
 
     private Pipe<Face> pipeSuccessor;
     private Pipe<Model> predecessor;
@@ -22,13 +22,10 @@ public class SourceSingle implements IFilterPush<Model, Face>, IFilterPull<Model
     }
 
     @Override
-    public Face read() {
+    public List<Face> read() {
         Model model = predecessor.read();
         List<Face> faces = model.getFaces();
-        for (Face f : faces) {
-            return f;
-        }
-        return null;
+        return faces;
     }
 
     @Override

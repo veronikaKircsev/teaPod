@@ -27,7 +27,7 @@ public class SourceSingle implements IFilterPush<Model, Face>, IFilterPull<Model
 
     @Override
     public Face read() {
-        if (count < faces.size()){
+        if (count < faces.size()) {
             return faces.get(count++);
         } else {
             count = 0;

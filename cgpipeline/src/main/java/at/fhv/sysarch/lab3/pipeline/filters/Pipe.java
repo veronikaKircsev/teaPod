@@ -22,13 +22,7 @@ public class Pipe<T> {
     }
 
     public T read() {
-            T input = filterPredecessor.read() != null ? filterPredecessor.read() : null;
-            if (input != null) {
-                return input;
-            } else {
-                return null;
-            }
-
+        return filterPredecessor.read();
     }
 
 

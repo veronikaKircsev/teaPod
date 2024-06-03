@@ -1,11 +1,12 @@
 package at.fhv.sysarch.lab3.pipeline.filters;
 
 import at.fhv.sysarch.lab3.obj.Face;
+import at.fhv.sysarch.lab3.pipeline.data.Pair;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Vec4;
 
 
-public class ModelViewTransformationFilter implements IFilterPush<Face, Face>,
+public class ModelViewTransformationFilter implements IFilterPush<Face,Face>,
         IFilterPull<Face, Face> {
 
     private Mat4 transMatrix;
@@ -22,7 +23,7 @@ public class ModelViewTransformationFilter implements IFilterPush<Face, Face>,
     }
 
     public void write(Face input) {
-        pipeSuccessor.write(transform(input));
+        pipeSuccessor.write((transform(input)));
 
     }
 

@@ -4,7 +4,6 @@ import at.fhv.sysarch.lab3.obj.Face;
 import at.fhv.sysarch.lab3.obj.Model;
 
 import java.util.List;
-import java.util.Queue;
 
 public class SourceSingle implements IFilterPush<Model, Face>, IFilterPull<Model,Face> {
 
@@ -23,6 +22,15 @@ public class SourceSingle implements IFilterPush<Model, Face>, IFilterPull<Model
         model.getFaces().forEach(f -> {
             pipeSuccessor.write(f);
         });
+        /*
+            int i = 0;
+            while (i < model.getFaces().size() - 2) {
+                i++;
+                pipeSuccessor.write(new Pair<>(model.getFaces().get(i), true));
+            }
+            pipeSuccessor.write(new Pair<>(model.getFaces().get(model.getFaces().size() - 1), false));
+
+         */
     }
 
     @Override

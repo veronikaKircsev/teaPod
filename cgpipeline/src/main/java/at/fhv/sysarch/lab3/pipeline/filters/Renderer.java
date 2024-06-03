@@ -66,9 +66,15 @@ public class Renderer implements IFilterPush<Pair<Face, Color>, Face>, IFilterPu
             gpc.fillOval(input.fst().getV2().getX(),input.fst().getV2().getY(),1,1);
             gpc.fillOval(input.fst().getV3().getX(),input.fst().getV3().getY(),1,1);
         } else if(this.renderingMode == RenderingMode.WIREFRAME) {
+            /*
             gpc.strokeLine(input.fst().getV1().getX(), input.fst().getV1().getY(), input.fst().getV2().getX(), input.fst().getV2().getY());
             gpc.strokeLine(input.fst().getV2().getX(), input.fst().getV2().getY(), input.fst().getV3().getX(), input.fst().getV3().getY());
             gpc.strokeLine(input.fst().getV1().getX(), input.fst().getV1().getY(), input.fst().getV3().getX(), input.fst().getV3().getY());
+
+             */
+            double[] cordX = new double[]{ input.fst().getV1().getX(), input.fst().getV2().getX(), input.fst().getV3().getX() };
+            double[] cordY = new double[]{ input.fst().getV1().getY(), input.fst().getV2().getY(), input.fst().getV3().getY()};
+            gpc.strokePolygon(cordX, cordY, 3);
         } else if (this.renderingMode == RenderingMode.FILLED){
             double[] cordX = new double[]{ input.fst().getV1().getX(), input.fst().getV2().getX(), input.fst().getV3().getX() };
             double[] cordY = new double[]{ input.fst().getV1().getY(), input.fst().getV2().getY(), input.fst().getV3().getY()};

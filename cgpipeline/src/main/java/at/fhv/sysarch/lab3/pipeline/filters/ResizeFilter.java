@@ -1,6 +1,7 @@
 package at.fhv.sysarch.lab3.pipeline.filters;
 
 import at.fhv.sysarch.lab3.obj.Face;
+import at.fhv.sysarch.lab3.pipeline.data.Pair;
 
 public class ResizeFilter implements IFilterPush<Face, Face>, IFilterPull<Face, Face> {
 
@@ -13,10 +14,8 @@ public class ResizeFilter implements IFilterPush<Face, Face>, IFilterPull<Face, 
     }
 
     @Override
-    public void write(Face face) {
-        if (face != null) {
-            pipeSuccessor.write(transform(face));
-        }
+    public void write(Face input) {
+        pipeSuccessor.write(transform(input));
     }
 
     @Override

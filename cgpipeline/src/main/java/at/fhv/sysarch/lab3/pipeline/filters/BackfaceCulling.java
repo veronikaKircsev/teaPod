@@ -22,13 +22,7 @@ public class BackfaceCulling implements IFilterPush<Face, Face>, IFilterPull<Fac
 
     @Override
     public void write(Face input) {
-
-        Vec4 cam = new Vec4(camera.getX(), camera.getY(), camera.getZ(), 0);
-        Vec4 viewVector = input.getV1().subtract(cam);
-
-        if (input.getN1().dot(viewVector) > 0) {
-            pipeSuccessor.write(null);
-        } else {
+        if (transform(input) <= 0) {
             pipeSuccessor.write(input);
         }
 
@@ -43,9 +37,7 @@ public class BackfaceCulling implements IFilterPush<Face, Face>, IFilterPull<Fac
                     end = true;
                     return null;
                 } else {
-                    Vec4 cam = new Vec4(camera.getX(), camera.getY(), camera.getZ(), 0);
-                    Vec4 viewVector = input.getV1().subtract(cam);
-                    if (input.getN1().dot(viewVector) > 0) {
+                    if (transform(input) >= 0) {
                         return read();
                     } else {
                         return input;
@@ -61,4 +53,17 @@ public class BackfaceCulling implements IFilterPush<Face, Face>, IFilterPull<Fac
     public void setPipePredecessor(Pipe<Face> predecessor) {
         this.predecessor = predecessor;
     }
+
+
+    private float transform(Face input){
+        Vec4 cam = new Vec4(camera.getX(), camera.getY(), camera.getZ(), 1);
+        Vec4 viewVector1 = input.getV1().subtract(cam);
+        Vec4 viewVector2 = input.getV2().subtract(cam);
+        Vec4 viewVector3 = input.getV3().subtract(cam);
+        float viewDistance = (input.getN1().dot(viewVector1) + input.getN2().dot(viewVector2)
+                + input.getN3().dot(viewVector3)) / 3;
+        return viewDistance;
+    }
+
+
 }

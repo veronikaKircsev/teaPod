@@ -23,7 +23,9 @@ public class Lighting implements IFilterPush<Pair<Face,Color>, Pair<Face,Color>>
 
     @Override
     public void write(Pair<Face, Color> input) {
-        pipeSuccessor.write(transform(input));
+        if (input != null) {
+            pipeSuccessor.write(transform(input));
+        }
     }
 
     @Override

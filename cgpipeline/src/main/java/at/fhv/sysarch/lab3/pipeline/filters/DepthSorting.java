@@ -1,6 +1,7 @@
 package at.fhv.sysarch.lab3.pipeline.filters;
 
 import at.fhv.sysarch.lab3.obj.Face;
+import at.fhv.sysarch.lab3.pipeline.data.Pair;
 import com.hackoeur.jglm.Vec3;
 
 import java.util.*;
@@ -18,9 +19,11 @@ public class DepthSorting implements IFilterPush<Face, Face>, IFilterPull<Face, 
 
     private Queue<Face> faces = new PriorityQueue<>((o1, o2) -> {
         float cam = camera.getZ() * 3;
-        float v1 =  (o1.getV1().getZ() + o1.getV2().getZ() + o1.getV3().getZ() - cam) / 3;
-        float v2 = (o2.getV1().getZ() + o2.getV2().getZ() + o2.getV3().getZ() - cam) / 3;
-        return Float.compare(v2, v1);
+        float v1 =  (o1.getV1().getZ() + o1.getV2().getZ() + o1.getV3().getZ()) / 3;
+        float v2 = (o2.getV1().getZ() + o2.getV2().getZ() + o2.getV3().getZ()) / 3;
+        float dist1 = Math.abs(v1 - cam);
+        float dist2 = Math.abs(v2 - cam);
+        return Float.compare(dist2, dist1);
     });
 
     @Override
@@ -30,16 +33,12 @@ public class DepthSorting implements IFilterPush<Face, Face>, IFilterPull<Face, 
 
     @Override
     public void write(Face input) {
-        if (input != null) {
-            faces.add(input);
-        } else {
-            while (!faces.isEmpty()) {
-                Face face = faces.poll();
-                if (pipeSuccessor != null && face != null) {
-                    pipeSuccessor.write(face);
-                }
+            if (!faces.isEmpty()) {
+                faces.add(input);
+            } else {
+                faces.add(input);
+                pipeSuccessor.write(faces.poll());
             }
-        }
 
     }
 

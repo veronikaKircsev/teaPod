@@ -20,6 +20,7 @@ public class Renderer implements IFilterPush<Pair<Face, Color>, Face>, IFilterPu
     private final Color modelColor;
     private final RenderingMode renderingMode;
     private Pipe<Pair<Face, Color>> predecessor;
+    private boolean end = false;
 
     public Renderer(GraphicsContext gpc, RenderingMode renderingMode, Color modelColor) {
         this.gpc = gpc;
@@ -36,15 +37,19 @@ public class Renderer implements IFilterPush<Pair<Face, Color>, Face>, IFilterPu
         transform(input);
     }
 
-    public void start() {
+    @Override
+    public Face read() {
+        if (!end){
             Pair<Face, Color> input = predecessor.read();
             if (input != null) {
                 transform(input);
-            }
-    }
-    @Override
-    public Face read() {
-        return null;
+                return read();
+            } else {
+                end = true;
+                return read(); }
+        } else {
+            end = false;
+            return null;}
     }
 
     @Override

@@ -32,6 +32,7 @@ public class DepthSorting implements IFilterPush<Face, Face>, IFilterPull<Face, 
     public void write(Face input) {
         if (input != null) {
             faces.add(input);
+        } else {
             while (!faces.isEmpty()) {
                 Face face = faces.poll();
                 if (pipeSuccessor != null && face != null) {
@@ -44,7 +45,7 @@ public class DepthSorting implements IFilterPush<Face, Face>, IFilterPull<Face, 
 
     @Override
     public Face read() {
-        Face face = null;
+        Face face;
             if (!end) {
                 Face input = predecessor.read();
                 if (input != null) {
@@ -55,10 +56,12 @@ public class DepthSorting implements IFilterPush<Face, Face>, IFilterPull<Face, 
                 }
             } else if (!faces.isEmpty()) {
                 face = faces.poll();
+                return face;
             } else if (faces.isEmpty()) {
                 end = false;
+                return null;
             }
-        return face;
+        return read();
     }
 
     @Override

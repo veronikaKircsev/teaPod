@@ -107,9 +107,7 @@ public class PullPipelineFactory {
                 Mat4 transMat = pd.getModelTranslation().multiply(rotMat);
                 Mat4 viewMat = pd.getViewTransform().multiply(transMat);
                 modelViewTransformationFilter.setTransMatrix(viewMat);
-                for(int i=0; i <model.getFaces().size(); i++) {
-                    renderer.start();
-                }
+                renderer.read();
 
                 // TODO compute rotation in radians
 

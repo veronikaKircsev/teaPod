@@ -26,7 +26,7 @@ import javafx.stage.Stage;
 public class Main extends Application {
     private static int VIEW_WIDTH;
     private static int VIEW_HEIGHT;
-    private final static boolean USE_PUSH_PIPELINE = true;
+    private final static boolean USE_PUSH_PIPELINE = false;
 
 
     @Override

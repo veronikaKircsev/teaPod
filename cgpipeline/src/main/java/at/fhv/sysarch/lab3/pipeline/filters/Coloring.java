@@ -4,14 +4,12 @@ import at.fhv.sysarch.lab3.obj.Face;
 import at.fhv.sysarch.lab3.pipeline.data.Pair;
 import javafx.scene.paint.Color;
 
-import java.util.ArrayList;
-import java.util.List;
 
-public class Coloring implements IFilterPush<Face, Pair<Face, Color>>, IFilterPull<List<Face>, List<Pair<Face, Color>>> {
+public class Coloring implements IFilterPush<Face, Pair<Face, Color>>, IFilterPull<Face, Pair<Face, Color>> {
 
     private Color coloring;
     private Pipe<Pair<Face, Color>> pipeSuccessor;
-    private Pipe<List<Face>> predecessor;
+    private Pipe<Face> predecessor;
 
     public Coloring(Color coloring) {
         this.coloring = coloring;
@@ -29,22 +27,17 @@ public class Coloring implements IFilterPush<Face, Pair<Face, Color>>, IFilterPu
     }
 
     @Override
-    public List<Pair<Face, Color>> read() {
-        try {
-        List<Face> faceList = predecessor.read();
-        List<Pair<Face, Color>> result = new ArrayList<>();
-        for (Face face : faceList) {
-            result.add(new Pair<>(face, coloring));
-        }
-        return result;
-
-        } catch (Exception e) {
+    public Pair<Face, Color> read() {
+        Face face = predecessor.read();
+        if (face == null) {
             return null;
+        } else {
+            return new Pair<>(face, coloring);
         }
     }
 
     @Override
-    public void setPipePredecessor(Pipe<List<Face>> predecessor) {
+    public void setPipePredecessor(Pipe<Face> predecessor) {
         this.predecessor = predecessor;
     }
 

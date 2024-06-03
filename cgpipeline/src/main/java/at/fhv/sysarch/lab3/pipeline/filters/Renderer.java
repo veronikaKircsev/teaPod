@@ -8,7 +8,7 @@ import javafx.scene.paint.Color;
 
 import java.util.List;
 
-public class Renderer implements IFilterPush<Pair<Face, Color>, Face>, IFilterPull<List<Pair<Face, Color>>, Face> {
+public class Renderer implements IFilterPush<Pair<Face, Color>, Face>, IFilterPull<Pair<Face, Color>, Face> {
 
     //grafischen Kontexteinstellungen zuzugreifen und sie zu manipulieren
     //GraphicsContext ist eine Klasse aus JavaFX, die verwendet wird,
@@ -19,7 +19,7 @@ public class Renderer implements IFilterPush<Pair<Face, Color>, Face>, IFilterPu
     private final GraphicsContext gpc;
     private final Color modelColor;
     private final RenderingMode renderingMode;
-    private Pipe<List<Pair<Face, Color>>> predecessor;
+    private Pipe<Pair<Face, Color>> predecessor;
 
     public Renderer(GraphicsContext gpc, RenderingMode renderingMode, Color modelColor) {
         this.gpc = gpc;
@@ -37,31 +37,18 @@ public class Renderer implements IFilterPush<Pair<Face, Color>, Face>, IFilterPu
     }
 
     public void start() {
-        try {
-            List<Pair<Face, Color>> input = predecessor.read();
-            for (Pair<Face, Color> child : input) {
-                transform(child);
+            Pair<Face, Color> input = predecessor.read();
+            if (input != null) {
+                transform(input);
             }
-        } catch (Exception e) {
-            System.out.println(e);
-        }
     }
     @Override
     public Face read() {
-        try {
-            List<Pair<Face, Color>> input = predecessor.read();
-            for (Pair<Face, Color> child : input) {
-                System.out.println(child);
-                transform(child);
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-        }
         return null;
     }
 
     @Override
-    public void setPipePredecessor(Pipe<List<Pair<Face, Color>>> predecessor) {
+    public void setPipePredecessor(Pipe<Pair<Face, Color>> predecessor) {
         this.predecessor = predecessor;
     }
 

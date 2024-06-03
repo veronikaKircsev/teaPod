@@ -15,53 +15,52 @@ import java.util.List;
 public class PullPipelineFactory {
     public static AnimationTimer createPipeline(PipelineData pd) {
         // pull from the source (model)
-        Source source = new Source();
-        source.setModel(pd.getModel());
-        Pipe<Model> sourcePipe = new Pipe<>();
-        sourcePipe.setPredecessor(source);
+        //Source source = new Source();
+        //source.setModel(pd.getModel());
+       // Pipe<Model> sourcePipe = new Pipe<>();
+       // sourcePipe.setPredecessor(source);
 
         SourceSingle sourceSingle = new SourceSingle();
-        sourceSingle.setPipePredecessor(sourcePipe);
-        Pipe<List<Face>> singleSourcePipe = new Pipe<>();
+        Pipe<Face> singleSourcePipe = new Pipe<>();
         singleSourcePipe.setPredecessor(sourceSingle);
         // perform model-view transformation from model to VIEW SPACE coordinates
         ModelViewTransformationFilter modelViewTransformationFilter = new ModelViewTransformationFilter();
         modelViewTransformationFilter.setPipePredecessor(singleSourcePipe);
-        Pipe<List<Face>> viewPipe = new Pipe<>();
+        Pipe<Face> viewPipe = new Pipe<>();
         viewPipe.setPredecessor(modelViewTransformationFilter);
 
         ResizeFilter resizeFilter = new ResizeFilter();
         resizeFilter.setPipePredecessor(viewPipe);
-        Pipe<List<Face>> resizePipe = new Pipe<>();
+        Pipe<Face> resizePipe = new Pipe<>();
         resizePipe.setPredecessor(resizeFilter);
 
         // perform backface culling in VIEW SPACE
         BackfaceCulling backfaceCulling = new BackfaceCulling(pd.getViewingEye());
         backfaceCulling.setPipePredecessor(resizePipe);
-        Pipe<List<Face>> backFacePipe = new Pipe<>();
+        Pipe<Face> backFacePipe = new Pipe<>();
         backFacePipe.setPredecessor(backfaceCulling);
 
         // perform depth sorting in VIEW SPACE
         DepthSorting depthSorting = new DepthSorting(pd.getViewingEye());
         depthSorting.setPipePredecessor(backFacePipe);
-        Pipe<List<Face>> depthPipe = new Pipe<>();
+        Pipe<Face> depthPipe = new Pipe<>();
         depthPipe.setPredecessor(depthSorting);
 
         //add coloring (space unimportant)
         Coloring color = new Coloring(pd.getModelColor());
         color.setPipePredecessor(depthPipe);
-        Pipe<List<Pair<Face, Color>>> colorPipe = new Pipe<>();
+        Pipe<Pair<Face, Color>> colorPipe = new Pipe<>();
         colorPipe.setPredecessor(color);
 
         // lighting can be switched on/off
         ProjectionTransformationFilter projectionTransformationFilter = new ProjectionTransformationFilter(pd);
-        Pipe<List<Pair<Face,Color>>> projectionPipe = new Pipe<>();
+        Pipe<Pair<Face,Color>> projectionPipe = new Pipe<>();
         projectionPipe.setPredecessor(projectionTransformationFilter);
         if (pd.isPerformLighting()) {
             // perform lighting in VIEW SPACE
             Lighting lighting = new Lighting(pd.getLightPos());
             lighting.setPipePredecessor(colorPipe);
-            Pipe<List<Pair<Face, Color>>> lightingPipe = new Pipe<>();
+            Pipe<Pair<Face, Color>> lightingPipe = new Pipe<>();
             lightingPipe.setPredecessor(lighting);
             
             // perform projection transformation on VIEW SPACE coordinates
@@ -76,7 +75,7 @@ public class PullPipelineFactory {
 
         ScreenSpaceFilter screenSpaceFilter = new ScreenSpaceFilter(pd.getViewportTransform());
         screenSpaceFilter.setPipePredecessor(projectionPipe);
-        Pipe<List<Pair<Face, Color>>> screenSpacePipe = new Pipe<>();
+        Pipe<Pair<Face, Color>> screenSpacePipe = new Pipe<>();
         screenSpacePipe.setPredecessor(screenSpaceFilter);
 
         // TODO 7. feed into the sink (renderer)
@@ -98,6 +97,7 @@ public class PullPipelineFactory {
             @Override
             protected void render(float fraction, Model model) {
 
+                sourceSingle.setModel(model);
 
                 rotation +=  (fraction)%360;
 

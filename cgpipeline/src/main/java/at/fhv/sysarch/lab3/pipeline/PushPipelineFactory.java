@@ -10,6 +10,8 @@ import javafx.animation.AnimationTimer;
 import at.fhv.sysarch.lab3.pipeline.filters.*;
 import javafx.scene.paint.Color;
 
+import java.util.List;
+
 public class PushPipelineFactory {
     public static AnimationTimer createPipeline(PipelineData pd) {
 
@@ -54,25 +56,25 @@ public class PushPipelineFactory {
         depthSorting.setPipeSuccessor(depthSortingPipe);
 
 
-        Pipe<Face> backFacePipe = new Pipe<>();
+        Pipe<List<Face>> backFacePipe = new Pipe<>();
         backFacePipe.setSuccessor(depthSorting);
         // perform backface culling in VIEW SPACE
         BackfaceCulling backfaceCulling = new BackfaceCulling(pd.getViewingEye());
         backfaceCulling.setPipeSuccessor(backFacePipe);
 
-        Pipe<Face> pipe = new Pipe<>();
+        Pipe<List<Face>> pipe = new Pipe<>();
         pipe.setSuccessor(backfaceCulling);
 
         ResizeFilter filter = new ResizeFilter();
         filter.setPipeSuccessor(pipe);
 
-        Pipe<Face> transFilterPipe = new Pipe<>();
+        Pipe<List<Face>> transFilterPipe = new Pipe<>();
         transFilterPipe.setSuccessor(filter);
         //perform model-view transformation from model to VIEW SPACE coordinates
         ModelViewTransformationFilter transFilter = new ModelViewTransformationFilter();
         transFilter.setPipeSuccessor(transFilterPipe);
 
-        Pipe<Face> sourcePipe = new Pipe<>();
+        Pipe<Model> sourcePipe = new Pipe<>();
         sourcePipe.setSuccessor(transFilter);
         // push from the source (model)
         SourceSingle source = new SourceSingle();

@@ -4,15 +4,18 @@ import at.fhv.sysarch.lab3.obj.Face;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.Vec4;
 
-public class BackfaceCulling implements IFilterPush<Face, Face>, IFilterPull<Face, Face> {
+import java.util.ArrayList;
+import java.util.List;
+
+public class BackfaceCulling implements IFilterPush<List<Face>, List<Face>>, IFilterPull<Face, Face> {
 
     private Vec3 camera;
-    private Pipe<Face> pipeSuccessor;
+    private Pipe<List<Face>> pipeSuccessor;
     private Pipe<Face> predecessor;
     private boolean end;
 
     @Override
-    public void setPipeSuccessor(Pipe<Face> pipe) {
+    public void setPipeSuccessor(Pipe<List<Face>> pipe) {
         this.pipeSuccessor = pipe;
     }
 
@@ -21,10 +24,23 @@ public class BackfaceCulling implements IFilterPush<Face, Face>, IFilterPull<Fac
     }
 
     @Override
-    public void write(Face input) {
+    public void write(List<Face> input) {
+        List<Face> output = new ArrayList<>();
+        for (Face face : input){
+            Face newFace = face;
+            if (transform(newFace) <= 0) {
+                output.add(face);
+            }
+        }
+
+        pipeSuccessor.write(output);
+
+        /*
         if (transform(input) <= 0) {
             pipeSuccessor.write(input);
         }
+
+         */
 
     }
 

@@ -3,19 +3,28 @@ package at.fhv.sysarch.lab3.pipeline.filters;
 import at.fhv.sysarch.lab3.obj.Face;
 import at.fhv.sysarch.lab3.pipeline.data.Pair;
 
-public class ResizeFilter implements IFilterPush<Face, Face>, IFilterPull<Face, Face> {
+import java.util.ArrayList;
+import java.util.List;
 
-    private Pipe<Face> pipeSuccessor;
+public class ResizeFilter implements IFilterPush<List<Face>, List<Face>>, IFilterPull<Face, Face> {
+
+    private Pipe<List<Face>> pipeSuccessor;
     private Pipe<Face> predecessor;
 
     @Override
-    public void setPipeSuccessor(Pipe<Face> pipe) {
+    public void setPipeSuccessor(Pipe<List<Face>> pipe) {
         this.pipeSuccessor = pipe;
     }
 
     @Override
-    public void write(Face input) {
-        pipeSuccessor.write(transform(input));
+    public void write(List<Face> input) {
+        List<Face> output = new ArrayList<>();
+        for (Face face : input){
+            output.add(transform(face));
+        }
+        pipeSuccessor.write(output);
+
+        //pipeSuccessor.write(transform(input));
     }
 
     @Override

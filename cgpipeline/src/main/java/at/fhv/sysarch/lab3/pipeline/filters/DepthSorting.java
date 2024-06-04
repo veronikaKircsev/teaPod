@@ -6,7 +6,7 @@ import com.hackoeur.jglm.Vec3;
 
 import java.util.*;
 
-public class DepthSorting implements IFilterPush<Face, Face>, IFilterPull<Face, Face> {
+public class DepthSorting implements IFilterPush<List<Face>, Face>, IFilterPull<Face, Face> {
 
     private static Vec3 camera;
     private Pipe<Face> pipeSuccessor;
@@ -32,13 +32,23 @@ public class DepthSorting implements IFilterPush<Face, Face>, IFilterPull<Face, 
     }
 
     @Override
-    public void write(Face input) {
+    public void write(List<Face> input) {
+        for (Face face : input) {
+            faces.add(face);
+
+        }
+        while (!faces.isEmpty()){
+            pipeSuccessor.write(faces.poll());
+        }
+        /*
             if (!faces.isEmpty()) {
                 faces.add(input);
             } else {
                 faces.add(input);
                 pipeSuccessor.write(faces.poll());
             }
+
+         */
 
     }
 

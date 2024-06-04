@@ -1,19 +1,23 @@
 package at.fhv.sysarch.lab3.pipeline.filters;
 
 import at.fhv.sysarch.lab3.obj.Face;
+import at.fhv.sysarch.lab3.obj.Model;
 import at.fhv.sysarch.lab3.pipeline.data.Pair;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Vec4;
 
+import java.util.ArrayList;
+import java.util.List;
 
-public class ModelViewTransformationFilter implements IFilterPush<Face,Face>,
+
+public class ModelViewTransformationFilter implements IFilterPush<Model, List<Face>>,
         IFilterPull<Face, Face> {
 
     private Mat4 transMatrix;
-    private Pipe<Face> pipeSuccessor;
+    private Pipe<List<Face>> pipeSuccessor;
     private Pipe<Face> predecessor;
 
-    public void setPipeSuccessor(Pipe<Face> pipe) {
+    public void setPipeSuccessor(Pipe<List<Face>> pipe) {
 
         this.pipeSuccessor = pipe;
     }
@@ -22,8 +26,14 @@ public class ModelViewTransformationFilter implements IFilterPush<Face,Face>,
         this.transMatrix = matrix;
     }
 
-    public void write(Face input) {
-        pipeSuccessor.write((transform(input)));
+    public void write(Model input) {
+        List<Face> faces = input.getFaces();
+        List<Face> output = new ArrayList<>();
+        for (Face face : faces) {
+            output.add(transform((face)));
+        }
+        pipeSuccessor.write(output);
+        //pipeSuccessor.write((transform(input)));
 
     }
 

@@ -1,7 +1,6 @@
 package at.fhv.sysarch.lab3.pipeline.filters;
 
 import at.fhv.sysarch.lab3.obj.Face;
-import at.fhv.sysarch.lab3.pipeline.data.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +22,6 @@ public class ResizeFilter implements IFilterPush<List<Face>, List<Face>>, IFilte
             output.add(transform(face));
         }
         pipeSuccessor.write(output);
-
-        //pipeSuccessor.write(transform(input));
     }
 
     @Override

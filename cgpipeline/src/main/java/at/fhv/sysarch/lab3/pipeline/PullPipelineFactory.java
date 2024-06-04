@@ -14,12 +14,8 @@ import java.util.List;
 
 public class PullPipelineFactory {
     public static AnimationTimer createPipeline(PipelineData pd) {
-        // pull from the source (model)
-        //Source source = new Source();
-        //source.setModel(pd.getModel());
-       // Pipe<Model> sourcePipe = new Pipe<>();
-       // sourcePipe.setPredecessor(source);
 
+        // pull from the source (model)
         SourceSingle sourceSingle = new SourceSingle();
         Pipe<Face> singleSourcePipe = new Pipe<>();
         singleSourcePipe.setPredecessor(sourceSingle);
@@ -53,7 +49,7 @@ public class PullPipelineFactory {
         colorPipe.setPredecessor(color);
 
         // lighting can be switched on/off
-        ProjectionTransformationFilter projectionTransformationFilter = new ProjectionTransformationFilter(pd);
+        ProjectionTransformationFilter projectionTransformationFilter = new ProjectionTransformationFilter(pd.getProjTransform());
         Pipe<Pair<Face,Color>> projectionPipe = new Pipe<>();
         projectionPipe.setPredecessor(projectionTransformationFilter);
         if (pd.isPerformLighting()) {
@@ -71,14 +67,13 @@ public class PullPipelineFactory {
             projectionTransformationFilter.setPipePredecessor(colorPipe);
         }
 
-        // TODO 6. perform perspective division to screen coordinates
-
+        // perform perspective division to screen coordinates
         ScreenSpaceFilter screenSpaceFilter = new ScreenSpaceFilter(pd.getViewportTransform());
         screenSpaceFilter.setPipePredecessor(projectionPipe);
         Pipe<Pair<Face, Color>> screenSpacePipe = new Pipe<>();
         screenSpacePipe.setPredecessor(screenSpaceFilter);
 
-        // TODO 7. feed into the sink (renderer)
+        // feed into the sink (renderer)
         Renderer renderer = new Renderer(pd.getGraphicsContext(), pd.getRenderingMode(),pd.getModelColor());
         renderer.setPipePredecessor(screenSpacePipe);
 

@@ -1,20 +1,20 @@
 package at.fhv.sysarch.lab3.pipeline.filters;
 
 import at.fhv.sysarch.lab3.obj.Face;
-import at.fhv.sysarch.lab3.pipeline.PipelineData;
 import at.fhv.sysarch.lab3.pipeline.data.Pair;
+import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Vec4;
 import javafx.scene.paint.Color;
 
 public class ProjectionTransformationFilter implements IFilterPush<Pair<Face,Color>, Pair<Face,Color>>,
         IFilterPull<Pair<Face, Color>, Pair<Face,Color>> {
 
-    private PipelineData pd;
+    private Mat4 projTransform;
     private Pipe<Pair<Face, Color>> pipeSuccessor;
     private Pipe<Pair<Face, Color>> predecessor;
 
-    public ProjectionTransformationFilter(PipelineData pd){
-        this.pd = pd;
+    public ProjectionTransformationFilter(Mat4 pd){
+        this.projTransform = pd;
     }
 
     @Override
@@ -43,12 +43,14 @@ public class ProjectionTransformationFilter implements IFilterPush<Pair<Face,Col
     }
 
     private Pair<Face, Color> transform(Pair<Face, Color> input) {
-        Vec4 v1Proj = pd.getProjTransform().multiply(input.fst().getV1());
-        Vec4 v2Proj = pd.getProjTransform().multiply(input.fst().getV2());
-        Vec4 v3Proj = pd.getProjTransform().multiply(input.fst().getV3());
-        Vec4 v1ProjNorm = pd.getProjTransform().multiply(input.fst().getN1());
-        Vec4 v2ProjNorm = pd.getProjTransform().multiply(input.fst().getN2());
-        Vec4 v3ProjNorm = pd.getProjTransform().multiply(input.fst().getN3());
+        // Project the vertices of the Face using the projection transform matrix.
+        Vec4 v1Proj = projTransform.multiply(input.fst().getV1());
+        Vec4 v2Proj = projTransform.multiply(input.fst().getV2());
+        Vec4 v3Proj = projTransform.multiply(input.fst().getV3());
+        // Project the normals of the Face using the projection transform matrix.
+        Vec4 v1ProjNorm = projTransform.multiply(input.fst().getN1());
+        Vec4 v2ProjNorm = projTransform.multiply(input.fst().getN2());
+        Vec4 v3ProjNorm = projTransform.multiply(input.fst().getN3());
         return new Pair<>(new Face(v1Proj, v2Proj, v3Proj, v1ProjNorm, v2ProjNorm, v3ProjNorm), input.snd());
     }
 }

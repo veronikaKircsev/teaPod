@@ -19,13 +19,6 @@ public class SourceSingle implements IFilterPush<Model, Model>, IFilterPull<Mode
 
     @Override
     public void write(Model model) {
-        /*
-        model.getFaces().forEach(f -> {
-            pipeSuccessor.write(f);
-        });
-
-         */
-
         pipeSuccessor.write(model);
 
     }

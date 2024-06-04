@@ -34,14 +34,6 @@ public class BackfaceCulling implements IFilterPush<List<Face>, List<Face>>, IFi
         }
 
         pipeSuccessor.write(output);
-
-        /*
-        if (transform(input) <= 0) {
-            pipeSuccessor.write(input);
-        }
-
-         */
-
     }
 
     @Override
@@ -72,10 +64,14 @@ public class BackfaceCulling implements IFilterPush<List<Face>, List<Face>>, IFi
 
 
     private float transform(Face input){
+        // Camera position transform to Vec4
         Vec4 cam = new Vec4(camera.getX(), camera.getY(), camera.getZ(), 1);
+        // View vector between camera and vertex
         Vec4 viewVector1 = input.getV1().subtract(cam);
         Vec4 viewVector2 = input.getV2().subtract(cam);
         Vec4 viewVector3 = input.getV3().subtract(cam);
+        // create dot product from normal vector and view vector
+        // create an average view distance
         float viewDistance = (input.getN1().dot(viewVector1) + input.getN2().dot(viewVector2)
                 + input.getN3().dot(viewVector3)) / 3;
         return viewDistance;

@@ -44,17 +44,20 @@ public class Lighting implements IFilterPush<Pair<Face,Color>, Pair<Face,Color>>
     }
 
     private Pair<Face, Color> transform(Pair<Face, Color> input){
-        Face face = input.fst();  // Verwende getKey() für das erste Element
-        Color color = input.snd();  // Verwende getValue() für das zweite Element
+        Face face = input.fst();
+        Color color = input.snd();
+
+        // Calculate the shading value based on the dot product of the face normal and lightning
         float shading = face.getN1().toVec3().dot(unitVector.getUnitVector());
 
-        // Normalisiere shading zwischen 0 und 1
+        // Clamp the shading value to the range [0, 1]
         shading = Math.max(0, Math.min(1, shading));
 
+        // If the shading value is less than or equal to 0, return the face with black color
         if(shading <= 0){
             return new Pair<>(face, Color.BLACK);
         } else {
-            // Derive the color with the shading factor
+            // Otherwise, derive a new color based on the original color and the shading value
             Color shadedColor = color.deriveColor(0, 1, shading, 1);
             return new Pair<>(face, shadedColor);
         }

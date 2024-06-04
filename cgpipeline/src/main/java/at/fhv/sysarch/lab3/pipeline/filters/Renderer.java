@@ -6,15 +6,7 @@ import at.fhv.sysarch.lab3.rendering.RenderingMode;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-import java.util.List;
-
 public class Renderer implements IFilterPush<Pair<Face, Color>, Face>, IFilterPull<Pair<Face, Color>, Face> {
-
-    //grafischen Kontexteinstellungen zuzugreifen und sie zu manipulieren
-    //GraphicsContext ist eine Klasse aus JavaFX, die verwendet wird,
-    // um grundlegende Zeichenoperationen durchzuführen.
-    // Es bietet Methoden zum Zeichnen von Formen, Texten,
-    // Bildern und anderen grafischen Objekten auf einer Canvas.
 
     private final GraphicsContext gpc;
     private final Color modelColor;
@@ -60,28 +52,18 @@ public class Renderer implements IFilterPush<Pair<Face, Color>, Face>, IFilterPu
     public void transform(Pair<Face, Color> input) {
         gpc.setStroke(input.snd());
         gpc.setFill(input.snd());
+        double[] cordX = new double[]{ input.fst().getV1().getX(), input.fst().getV2().getX(), input.fst().getV3().getX() };
+        double[] cordY = new double[]{ input.fst().getV1().getY(), input.fst().getV2().getY(), input.fst().getV3().getY()};
         if(this.renderingMode == RenderingMode.POINT) {
             gpc.setLineWidth(1);
             gpc.fillOval(input.fst().getV1().getX(),input.fst().getV1().getY(),1,1);
             gpc.fillOval(input.fst().getV2().getX(),input.fst().getV2().getY(),1,1);
             gpc.fillOval(input.fst().getV3().getX(),input.fst().getV3().getY(),1,1);
         } else if(this.renderingMode == RenderingMode.WIREFRAME) {
-            /*
-            gpc.strokeLine(input.fst().getV1().getX(), input.fst().getV1().getY(), input.fst().getV2().getX(), input.fst().getV2().getY());
-            gpc.strokeLine(input.fst().getV2().getX(), input.fst().getV2().getY(), input.fst().getV3().getX(), input.fst().getV3().getY());
-            gpc.strokeLine(input.fst().getV1().getX(), input.fst().getV1().getY(), input.fst().getV3().getX(), input.fst().getV3().getY());
-
-             */
-            double[] cordX = new double[]{ input.fst().getV1().getX(), input.fst().getV2().getX(), input.fst().getV3().getX() };
-            double[] cordY = new double[]{ input.fst().getV1().getY(), input.fst().getV2().getY(), input.fst().getV3().getY()};
             gpc.strokePolygon(cordX, cordY, 3);
         } else if (this.renderingMode == RenderingMode.FILLED){
-            double[] cordX = new double[]{ input.fst().getV1().getX(), input.fst().getV2().getX(), input.fst().getV3().getX() };
-            double[] cordY = new double[]{ input.fst().getV1().getY(), input.fst().getV2().getY(), input.fst().getV3().getY()};
-            gpc.fillPolygon(cordX,
-                    cordY,3);
+            gpc.fillPolygon(cordX, cordY,3);
             gpc.strokePolygon(cordX, cordY, 3);
-
         }
     }
 

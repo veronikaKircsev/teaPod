@@ -22,7 +22,6 @@ public class ScreenSpaceFilter implements IFilterPush<Pair<Face, Color>, Pair<Fa
 
     @Override
     public void write(Pair<Face, Color> input) {
-        // Transformierte Face und Farbe an den nächsten Filter weiterleiten
         pipeSuccessor.write(transform(input));
     }
 
@@ -38,6 +37,7 @@ public class ScreenSpaceFilter implements IFilterPush<Pair<Face, Color>, Pair<Fa
     }
 
     private Pair<Face, Color> transform(Pair<Face, Color> input) {
+        // Apply the perspective transformation to each normalized vertex in the Face.
         return new Pair<>(new Face(portTrans.multiply(input.fst().getV1().multiply(1f / input.fst().getV1().getW()))
                 , portTrans.multiply(input.fst().getV2().multiply(1f / input.fst().getV2().getW())),
                 portTrans.multiply(input.fst().getV3().multiply(1f / input.fst().getV3().getW())), input.fst()), input.snd());

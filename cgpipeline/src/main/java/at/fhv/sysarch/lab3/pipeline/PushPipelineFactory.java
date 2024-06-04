@@ -27,7 +27,7 @@ public class PushPipelineFactory {
         Pipe<Pair<Face, Color>> projectionTransfomationPipe = new Pipe<>();
         projectionTransfomationPipe.setSuccessor(screenSpace);
         //perform projection transformation on VIEW SPACE coordinates
-        ProjectionTransformationFilter projectionTransformationFilter = new ProjectionTransformationFilter(pd);
+        ProjectionTransformationFilter projectionTransformationFilter = new ProjectionTransformationFilter(pd.getProjTransform());
         projectionTransformationFilter.setPipeSuccessor(projectionTransfomationPipe);
 
         Pipe<Pair<Face, Color>> colorPipe = new Pipe<>();
@@ -95,77 +95,21 @@ public class PushPipelineFactory {
             @Override
             protected void render(float fraction, Model model) {
 
-
-                //pd.getGraphicsContext().setStroke(Color.RED);
-                //pd.getGraphicsContext().strokeLine(pos,pos,pos+100,pos+100);
-                //pos++;
-
-
-                // müssen wir drechung bestimmen
-                //pd.getModelRotAxis();
-                //multiplizieren
-                //pd.getModelTranslation();
-                // resultat dann multipl with faces
-                //pd.getViewTransform();
-                // erste filter, immer neu bestimmen und neu filtern
-
-                // last two steps
-                //pd.getProjTransform();
-                //pd.getViewportTransform();
-
-                /*
-                Mat4 rotMat = Matrices.rotate(100, pd.getModelRotAxis()); // neue matrix kommt raus
-                Mat4 transMat = pd.getModelTranslation().multiply(rotMat);
-                Mat4 viewMat = pd.getViewTransform().multiply(transMat);
-                model.getFaces().forEach(f -> {
-                    Vec4 v1new =  viewMat.multiply(f.getV1());
-                    Vec4 v2new = viewMat.multiply(f.getV2());
-                    Vec4 v3new = viewMat.multiply(f.getV3());
-
-                    Vec4 v1NormalNew = viewMat.multiply(f.getN1());
-                    Vec4 v2NormalNew = viewMat.multiply(f.getN2());
-                    Vec4 v3NormalNew = viewMat.multiply(f.getN3());
-                    Face trans = new Face(v1new,v2new, v3new, v1NormalNew, v2NormalNew, v3NormalNew);
-
-                    Vec4 v1Proj = pd.getProjTransform().multiply(trans.getV1());
-                    Vec4 v2Proj = pd.getProjTransform().multiply(trans.getV2());
-                    Vec4 v3Proj = pd.getProjTransform().multiply(trans.getV3());
-
-                    pd.getViewTransform();
-
-                });
-
-                 */
                 rotation +=  (fraction)%360;
 
                 Mat4 rotMat = Matrices.rotate(rotation, pd.getModelRotAxis());
                 Mat4 transMat = pd.getModelTranslation().multiply(rotMat);
                 Mat4 viewMat = pd.getViewTransform().multiply(transMat);
 
-                /*pd.getModelRotAxis();
-                pd.getModelTranslation();
-                pd.getViewTransform();
-
-
-                pd.getProjTransform();
-                pd.getViewportTransform();*/
                 transFilter.setTransMatrix(viewMat);
 
                 source.write(model);
 
-                // vetktor kommt zurück
-                //ersteFilter fertig
-                 /*model.getFaces().forEach(face -> {
-                    pd.getGraphicsContext().strokeLine(face.getV1().getX()*100, face.getV1().getY()*100, face.getV2().getX()*100, face.getV2().getY()*100);
-                    pd.getGraphicsContext().strokeLine(face.getV2().getX()*100, face.getV2().getY()*100, face.getV3().getX()*100, face.getV3().getY()*100);
-                    pd.getGraphicsContext().strokeLine(face.getV1().getX()*100, face.getV1().getY()*100, face.getV3().getX()*100, face.getV3().getY()*100);
-                });*/
-
-                // TODO compute rotation in radians
+               // TODO compute rotation in radians
 
                 // TODO create new model rotation matrix using pd.modelRotAxis
 
-                // TODO compute updated model-view tranformation
+                // TODO compute updated model-view transformation
 
                 // TODO update model-view filter
 

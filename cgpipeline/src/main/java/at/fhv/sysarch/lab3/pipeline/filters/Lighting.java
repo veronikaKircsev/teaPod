@@ -48,7 +48,9 @@ public class Lighting implements IFilterPush<Pair<Face,Color>, Pair<Face,Color>>
         Color color = input.snd();
 
         // Calculate the shading value based on the dot product of the face normal and lightning
-        float shading = face.getN1().toVec3().dot(unitVector.getUnitVector());
+        float shading = (face.getN1().toVec3().dot(unitVector.getUnitVector())
+                + face.getN2().toVec3().dot(unitVector.getUnitVector()) + face.getN3().toVec3().dot(unitVector.getUnitVector()))
+                /3;
 
         // Clamp the shading value to the range [0, 1]
         shading = Math.max(0, Math.min(1, shading));

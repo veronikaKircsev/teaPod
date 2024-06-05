@@ -45,7 +45,7 @@ public class BackfaceCulling implements IFilterPush<List<Face>, List<Face>>, IFi
                     end = true;
                     return null;
                 } else {
-                    if (transform(input) >= 0) {
+                    if (transform(input) > 0) {
                         return read();
                     } else {
                         return input;

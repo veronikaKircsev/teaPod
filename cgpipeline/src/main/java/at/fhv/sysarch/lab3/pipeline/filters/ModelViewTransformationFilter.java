@@ -24,9 +24,8 @@ public class ModelViewTransformationFilter implements IFilterPush<Model, List<Fa
     }
 
     public void write(Model input) {
-        List<Face> faces = input.getFaces();
         List<Face> output = new ArrayList<>();
-        for (Face face : faces) {
+        for (Face face : input.getFaces()) {
             output.add(transform((face)));
         }
         pipeSuccessor.write(output);
